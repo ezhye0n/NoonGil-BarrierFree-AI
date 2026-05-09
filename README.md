@@ -9,7 +9,8 @@ Depth Estimation (Depth Anything): 거리 데이터(Depth Map) 생성
 
 Integration & Calculation: 추출된 좌표와 거리값을 수식에 대입하여 실제 물리량 계산
 
-Output: 통과 가능 여부 사용자 알림
+Output: 통과 가능 여부 사용자 알림  
+
 
 
 Project Overview: 사회적 이슈(효창공원 언덕길 경험)와 서비스 목적.
