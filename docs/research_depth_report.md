@@ -30,6 +30,10 @@
 | **원거리(가로세로1,2,5)** | 약 4.6m | 13.65m | 13.63m | 수치 일치 및 안정화 |
 - **분석:** 모델이 학습된 데이터 특성상 가로 이미지의 공간감을 더 정확하게 파악함.
 
+**Depth Map 결과 비교 예시 (가로세로 5 케이스)**
+![가로 촬영 결과](https://github.com/ezhye0n/Hyochang-BarrierFree-AI/blob/15346388b8ebceea7566979216828b4371107362/data/data/test_samples/results/result_13.65m_%EA%B0%80%EB%A1%9C5.jpg)
+![세로 촬영 결과](https://github.com/ezhye0n/Hyochang-BarrierFree-AI/blob/15346388b8ebceea7566979216828b4371107362/data/data/test_samples/results/result_13.63m_%EC%84%B8%EB%A1%9C5.jpg)
+
 ### 📏 거리별 정확도 (Case 분석)
 - **3m 이상:** 오차 범위 내에서 비교적 일관된 수치 출력.
 - **1m 미만(초근거리):** 피사체가 화면을 가득 채울 경우 거리값이 25m 이상으로 튀는 오류(Failure Case) 발생.
