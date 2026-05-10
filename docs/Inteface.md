@@ -1,3 +1,4 @@
+이지현 작성 | `Interface.md`
 # Model Output Interface (v1.0)
 
 ## 1.탁예린 (YOLO - Obstacle Detection)
