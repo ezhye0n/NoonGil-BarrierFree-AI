@@ -2,24 +2,6 @@
 NoonGil 프로젝트 - AI Hub 인도보행영상 → YOLO 포맷 변환기
 bbox XML + polygon XML 동시 처리
 
-[클래스 정의 v2 - 13 classes]
-  0: kickboard        전동킥보드
-  1: bicycle          자전거
-  2: motorcycle       오토바이
-  3: fire_hydrant     소화전
-  4: bollard          공사용 콘/라바콘/볼라드
-  5: street_light     가로수/가로등
-  6: bench            벤치
-  7: trash_can        쓰레기통/의류 수거함   ← 직접 수집 필요
-  8: tree             나무
-  9: pothole          노면 파손/포트홀       ← 직접 수집 필요
- 10: uneven_block     보도블록 들뜸/단차     ← 직접 수집 필요
- 11: curb             턱                    ← 직접 수집 필요
- 12: ramp             경사로                ← 직접 수집 필요
-
-※ AI Hub 데이터로 학습 가능한 클래스: 0~6, 8번 (8개)
-   7, 9~12번은 직접 수집 + 어노테이션 필요 (Roboflow 이슈 #5 참고)
-
 폴더 구조 가정:
     aihub_data/
     ├── bbox/
@@ -42,60 +24,55 @@ import argparse
 from pathlib import Path
 
 
-# ── 클래스 정의 (v2) ─────────────────────────────────────────
+# NOONGIL_CLASSES 전체 교체
 NOONGIL_CLASSES = [
-    "kickboard",        # 0: 전동킥보드
-    "bicycle",          # 1: 자전거
-    "motorcycle",       # 2: 오토바이
-    "fire_hydrant",     # 3: 소화전
-    "bollard",          # 4: 공사용 콘/라바콘/볼라드
-    "street_light",     # 5: 가로수/가로등
-    "bench",            # 6: 벤치
-    "trash_can",        # 7: 쓰레기통/의류 수거함 (직접 수집 필요)
-    "tree",             # 8: 나무
-    "pothole",          # 9: 노면 파손/포트홀 (직접 수집 필요)
-    "uneven_block",     # 10: 보도블록 들뜸/단차 (직접 수집 필요)
-    "curb",             # 11: 턱 (직접 수집 필요)
-    "ramp",             # 12: 경사로 (직접 수집 필요)
+    "bench",            # 0
+    "bicycle",          # 1
+    "bollard",          # 2
+    "clothing_bin",     # 3: 의류수거함 (직접 수집 필요)
+    "cone",             # 4: 공사용 콘
+    "electric_scooter", # 5: 전동킥보드
+    "fire_hydrant",     # 6: 소화전
+    "motorcycle",       # 7: 오토바이
+    "pavement_damage",  # 8: 노면 파손/포트홀 (직접 수집 필요)
+    "ramp",             # 9: 경사로 (직접 수집 필요)
+    "step",             # 10: 턱 (직접 수집 필요)
+    "street_light",     # 11: 가로수/가로등
+    "trash",            # 12: 쓰레기통 (직접 수집 필요)
+    "tree",             # 13: 나무
 ]
 
-# ── AI Hub XML 라벨 → NoonGil 클래스 ID 매핑 ─────────────────
-# 매핑되지 않은 AI Hub 라벨은 자동으로 무시됨
-# (person, car, bus, truck, cat, dog 등 보행로 무관 클래스 제외)
+# AIHUB_LABEL_MAP 전체 교체
 AIHUB_LABEL_MAP = {
-    # 전동킥보드 (AI Hub의 scooter로 근사)
-    "scooter":                  0,
+    # 전동킥보드
+    "scooter":                  5,
 
     # 자전거
     "bicycle":                  1,
 
     # 오토바이
-    "motorcycle":               2,
+    "motorcycle":               7,
 
     # 소화전
-    "fire_hydrant":             3,
+    "fire_hydrant":             6,
 
-    # 공사용 콘/라바콘/볼라드
-    "bollard":                  4,
-    "barricade":                4,  # 공사 바리케이드 → 동일 클래스 통합
+    # 볼라드
+    "bollard":                  2,
+    "barricade":                2,
 
-    # 가로수/가로등 (기둥 형태 구조물)
-    "pole":                     5,
-    "traffic_light_controller": 5,
-    "power_controller":         5,
+    # 공사용 콘
+    "cone":                     4,
+
+    # 가로수/가로등
+    "pole":                     11,
+    "traffic_light_controller": 11,
+    "power_controller":         11,
 
     # 벤치
-    "bench":                    6,
+    "bench":                    0,
 
     # 나무
-    "tree_trunk":               8,
-
-    # ── 아래 클래스는 직접 수집 데이터로만 추가 가능 ──
-    # trash_can     (7): AI Hub 라벨 없음
-    # pothole       (9): AI Hub 라벨 없음
-    # uneven_block (10): AI Hub 라벨 없음
-    # curb          (11): AI Hub 라벨 없음
-    # ramp          (12): AI Hub 라벨 없음
+    "tree_trunk":               13,
 }
 
 
