@@ -2,25 +2,11 @@
 NoonGil 프로젝트 - 공개 데이터 사전학습 → Fine-tuning 파이프라인
 YOLOv8 기반 인도 장애물 탐지
 
-[클래스 정의 v2 - 13 classes]
-  0: kickboard        전동킥보드
-  1: bicycle          자전거
-  2: motorcycle       오토바이
-  3: fire_hydrant     소화전
-  4: bollard          공사용 콘/라바콘/볼라드
-  5: street_light     가로수/가로등
-  6: bench            벤치
-  7: trash_can        쓰레기통/의류 수거함   ← 직접 수집 필요
-  8: tree             나무
-  9: pothole          노면 파손/포트홀       ← 직접 수집 필요
- 10: uneven_block     보도블록 들뜸/단차     ← 직접 수집 필요
- 11: curb             턱                    ← 직접 수집 필요
- 12: ramp             경사로                ← 직접 수집 필요
 
 [학습 전략]
 Stage 1: COCO pretrained weights 로드 (ultralytics 제공)
-Stage 2: AI Hub 인도보행영상 전체 데이터로 fine-tuning  (클래스 0~6, 8)
-Stage 3: NoonGil 커스텀 데이터로 최종 fine-tuning       (클래스 0~12 전체)
+Stage 2: AI Hub 인도보행영상 전체 데이터로 fine-tuning
+Stage 3: NoonGil 커스텀 데이터로 최종 fine-tuning
 
 Requirements:
     pip install ultralytics
@@ -31,45 +17,21 @@ import os
 import yaml
 from pathlib import Path
 
-
-# ============================================================
-# 설정
-# ============================================================
-CONFIG = {
-    # 모델 크기: n(nano) / s(small) / m(medium) / l / x
-    # 실시간 처리 목적 → 'n' 또는 's' 권장
-    "model_size": "s",
-
-    # 학습 단계별 에폭
-    "stage2_epochs": 100,   # AI Hub 전체 데이터 fine-tuning
-    "stage3_epochs": 50,    # NoonGil 커스텀 데이터 fine-tuning
-
-    # 이미지 크기 (원본 1920x1080 → 640 리사이즈)
-    "imgsz": 640,
-
-    # 배치 크기 (GPU 메모리에 맞게 조정)
-    "batch": 16,
-
-    # 디바이스
-    # Colab(GPU): 0  |  Mac Apple Silicon: "mps"  |  CPU only: "cpu"
-    "device": "mps",
-
-    # 데이터 경로
-    "aihub_data_yaml":   "./aihub_yolo/data.yaml",    # AI Hub 전체 데이터
-    "noongil_data_yaml": "./noongil_yolo/data.yaml",   # NoonGil 커스텀 데이터
-
-    # 저장 경로
-    "output_dir": "./runs/noongil",
+# COCO_OVERLAP 교체
+COCO_OVERLAP = {
+    "bicycle":      1,   # COCO class 1  → NoonGil class 1
+    "motorcycle":   3,   # COCO class 3  → NoonGil class 7
+    "fire_hydrant": 10,  # COCO class 10 → NoonGil class 6
+    "bench":        13,  # COCO class 13 → NoonGil class 0
 }
 
-# COCO pretrained 모델과 겹치는 NoonGil 클래스
-# (전이학습 효과를 기대할 수 있는 클래스)
-COCO_OVERLAP = {
-    "bicycle":      1,   # COCO class 1
-    "motorcycle":   3,   # COCO class 3
-    "fire_hydrant": 10,  # COCO class 10
-    "bench":        13,  # COCO class 13
-    "tree":         None,  # COCO에 없음 (potted plant으로 근사)
+# CONFIG 주석 업데이트
+CONFIG = {
+    ...
+    # 14 classes (Roboflow v1 기준)
+    "aihub_data_yaml":   "./aihub_yolo/data.yaml",
+    "noongil_data_yaml": "./noongil_yolo/data.yaml",
+    ...
 }
 
 
