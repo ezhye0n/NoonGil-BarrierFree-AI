@@ -1,0 +1,19 @@
+names:
+- bench
+- bicycle
+- bollard
+- clothing_bin
+- cone
+- electric_scooter
+- fire_hydrant
+- motorcycle
+- pavement_damage
+- ramp
+- step
+- street_light
+- trash
+- tree
+nc: 14
+path: /content/NoonGil_dataset
+train: images/train
+val: images/val
