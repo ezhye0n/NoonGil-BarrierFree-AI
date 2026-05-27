@@ -1,24 +1,32 @@
-from gtts import gTTS
+import edge_tts
+import asyncio
 import playsound
 import os
 
 DANGER_CLASSES = {"pavement_damage", "ramp"}
+
+# 한국어 여성 목소리 옵션
+# "ko-KR-SunHiNeural"   — 여성, 밝은 톤
+# "ko-KR-IUNeural"      — 여성, 부드러운 톤
+VOICE = "ko-KR-SunHiNeural"
+
+
+async def _synthesize(message: str):
+    communicate = edge_tts.Communicate(message, VOICE)
+    await communicate.save("tts_temp.mp3")
 
 
 def speak(message: str, last_message: str) -> str:
     if message == last_message:
         return last_message
 
-    tts = gTTS(text=message, lang="ko", tld="co.kr", lang_check=False)  # tld="co.kr"로 한국어 발음 개선
-    tts.save("tts_temp.mp3")
+    asyncio.run(_synthesize(message))
     playsound.playsound("tts_temp.mp3")
     try:
         os.remove("tts_temp.mp3")
     except Exception as e:
-        print(f"삭제 오류: {e}")  # 어떤 오류인지 확인
-    print("return 직전")  # 여기까지 오는지 확인
+        print(f"삭제 오류: {e}")
     return message
-
 
 def get_tts_message(class_name: str, avoid_direction: str) -> str | None:
     if class_name not in DANGER_CLASSES:
