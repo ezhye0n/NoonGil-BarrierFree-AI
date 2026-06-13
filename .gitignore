@@ -30,5 +30,27 @@ Thumbs.db
 .vscode/
 .idea/
 
+# Streamlit
+.streamlit/secrets.toml
+
+# AI Hub 원본 데이터
+aihub_data/
+
+# YOLO 변환 데이터셋
+aihub_yolo/
+noongil_yolo/
+datasets/
+
+# 학습 결과물
+runs/
+
+# 모델 가중치
+*.pt
+
+# 압축 파일
+*.zip
+
+# macOS
+.DS_Store
 # 데이터셋 (용량 큰 경우)
 data/raw/

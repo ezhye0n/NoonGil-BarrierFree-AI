@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 14
+names: ['bench', 'bicycle', 'bollard', 'clothing_bin', 'cone', 'electric_scooter', 'fire_hydrant', 'motorcycle', 'pavement_damage', 'ramp', 'step', 'street_light', 'trash', 'tree']
+
+roboflow:
+  workspace: s-workspace-6sd3n
+  project: noongil-barrierfree-ai
+  version: 2
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/s-workspace-6sd3n/noongil-barrierfree-ai/dataset/2
