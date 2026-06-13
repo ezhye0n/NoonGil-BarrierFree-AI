@@ -1,19 +1,3 @@
-# Hyochang-BarrierFree-AI
-## [프로그램 구동 흐름]
-
-Data Input: 실시간 촬영 이미지 1장 입력
-
-Object Detection (YOLO): 장애물 Bbox 좌표 추출
-
-Depth Estimation (Depth Anything): 거리 데이터(Depth Map) 생성
-
-Integration & Calculation: 추출된 좌표와 거리값을 수식에 대입하여 실제 물리량 계산
-
-Output: 통과 가능 여부 사용자 알림  
-
-
-
-
 # NoonGil-BarrierFree-AI 👁️ : Barrier-Free Navigation Assistant for Wheelchair Users
 
 > 휠체어 사용자의 보행 안전을 위한 AI 기반 장애물 탐지 및 경사도 추정 시스템
