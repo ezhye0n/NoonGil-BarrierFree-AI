@@ -1,48 +1,138 @@
-"""
-main.py
-눈길(NoonGil) 전체 파이프라인 진입점
-이미지 입력 → YOLOv8 탐지 → 회피 경로 → UI 출력
-"""
-import argparse
+import sys
+import os
+sys.path.append(os.path.dirname(__file__))
+import cv2
+import numpy as np
+from PIL import ImageFont, ImageDraw, Image
 from ultralytics import YOLO
-from output import draw_output
+from avoid import get_avoid_direction
+from tts import speak, get_tts_message
 
-# TODO: depth 연동 확정 후 추가
-# from depth_inference import get_depth_angle
-# from slope import get_slope_grade, get_slope_label
+CLASS_NAMES = {
+    0: "bench", 1: "bicycle", 2: "bollard", 3: "clothing_bin",
+    4: "cone", 5: "electric_scooter", 6: "fire_hydrant", 7: "motorcycle",
+    8: "pavement_damage", 9: "ramp", 10: "step", 11: "street_light",
+    12: "trash", 13: "tree"
+}
+
+CLASS_KO = {
+    "bench": "벤치", "bicycle": "자전거", "bollard": "볼라드",
+    "clothing_bin": "의류수거함", "cone": "라바콘", "electric_scooter": "전동킥보드",
+    "fire_hydrant": "소화전", "motorcycle": "오토바이", "pavement_damage": "노면 파손",
+    "ramp": "경사로", "step": "단차", "street_light": "가로등",
+    "trash": "쓰레기통", "tree": "가로수"
+}
+
+FONT_PATH = "C:/Windows/Fonts/malgun.ttf"
 
 
-def main(image_path: str, model_path: str = "../models/noongil_v4_best.pt"):
+def put_text_kr(image, text, position, font_size=20, color=(0, 200, 255)):
+    """OpenCV 이미지에 한글 텍스트 추가"""
+    img_pil = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+    draw = ImageDraw.Draw(img_pil)
+    font = ImageFont.truetype(FONT_PATH, font_size)
+    draw.text(position, text, font=font, fill=color)
+    return cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
+
+
+def draw_output(image_path: str, model, last_message: str = "") -> str:
     """
-    전체 파이프라인 실행
+    이미지에 탐지 결과 시각화 및 TTS 출력
 
     Args:
         image_path (str): 입력 이미지 경로
-        model_path (str): YOLOv8 모델 가중치 경로
+        model: YOLOv8 모델 객체
+        last_message (str): 직전 TTS 발화 메시지
+
+    Returns:
+        str: 방금 발화한 TTS 메시지
     """
-    print(f"📂 입력 이미지: {image_path}")
-    print(f"🤖 모델 로드 중: {model_path}")
+    image = cv2.imread(image_path)
+    h, w = image.shape[:2]
 
-    model = YOLO(model_path)
-    last_message = ""
+    results = model.predict(source=image_path, conf=0.25, verbose=False)
+    boxes = results[0].boxes
 
-    # 이미지 입력 → YOLOv8 탐지 → 회피 경로 → UI 출력
-    last_message = draw_output(image_path, model, last_message)
+    if len(boxes) == 0:
+        image = put_text_kr(image, "장애물 없음", (10, 40),
+                            font_size=24, color=(255, 255, 255))
+        base, ext = os.path.splitext(image_path)
+        output_path = base + "_result" + ext
+        cv2.imwrite(output_path, image)
+        print(f"저장 완료: {output_path}")
+        return last_message
 
-    # TODO: depth 연동 후 경사도 파이프라인 추가
-    # angle = get_depth_angle(image_path)
-    # slope_grade = get_slope_grade(angle)
-    # slope_label = get_slope_label(slope_grade)
+    # detections 리스트 구성
+    detections = []
+    for box in boxes:
+        cls_id = int(box.cls[0])
+        conf = float(box.conf[0])
+        x1, y1, x2, y2 = map(int, box.xyxy[0])
+        cx = (x1 + x2) // 2
+        class_name = CLASS_NAMES.get(cls_id, "unknown")
+        detections.append({
+            "cx": cx,
+            "confidence": conf,
+            "class": class_name
+        })
 
-    print("✅ 파이프라인 완료")
+    # 회피 방향
+    avoid_direction = get_avoid_direction(detections, w)
 
+    # 바운딩박스 시각화
+    best_conf = 0.0
+    best_class = None
+
+    for box in boxes:
+        cls_id = int(box.cls[0])
+        conf = float(box.conf[0])
+        x1, y1, x2, y2 = map(int, box.xyxy[0])
+        class_name = CLASS_NAMES.get(cls_id, "unknown")
+        class_ko = CLASS_KO.get(class_name, class_name)
+        print(f"탐지: {class_name} ({conf:.2f})")
+
+        # 바운딩박스
+        cv2.rectangle(image, (x1, y1), (x2, y2), (0, 200, 255), 2)
+
+        # 클래스명 + 신뢰도 (한글)
+        label = f"{class_ko} {conf:.2f}"
+        image = put_text_kr(image, label, (x1, max(y1 - 25, 0)),
+                            font_size=20, color=(0, 200, 255))
+
+        # TODO: 경사도 등급 표시 — depth 연동 후 추가 예정
+        # if class_name == "ramp":
+        #     angle = get_depth_angle(image_path, x1, y1, x2, y2)
+        #     slope_grade = get_slope_grade(angle)
+        #     slope_label = get_slope_label(slope_grade)
+        #     image = put_text_kr(image, slope_label, (x1, y2 + 25),
+        #                         font_size=20, color=(255, 100, 0))
+
+        if conf > best_conf:
+            best_conf = conf
+            best_class = class_name
+
+    # 회피 방향 하단 표시 (한글)
+    image = put_text_kr(image, avoid_direction, (10, h - 50),
+                        font_size=24, color=(0, 255, 0))
+
+    # TTS 출력
+    if best_class:
+        tts_msg = get_tts_message(best_class, avoid_direction)
+        if tts_msg:
+            last_message = speak(tts_msg, last_message)
+
+    # 결과 이미지 저장
+    base, ext = os.path.splitext(image_path)
+    output_path = base + "_result" + ext
+    cv2.imwrite(output_path, image)
+    print(f"저장 완료: {output_path}")
+
+    return last_message
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="눈길 장애물 탐지 시스템")
-    parser.add_argument("--image", type=str, required=True, help="입력 이미지 경로")
-    parser.add_argument("--model", type=str,
-                        default="../models/noongil_v4_best.pt",
-                        help="모델 가중치 경로")
-    args = parser.parse_args()
-
-    main(args.image, args.model)
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    model_path = os.path.join(BASE_DIR, "noongil_v4_best.pt")
+    image_path = os.path.join(BASE_DIR, "../data/raw/images/경사로_1.jpg")
+    model = YOLO(model_path)
+    last = ""
+    last = draw_output(image_path, model, last)
