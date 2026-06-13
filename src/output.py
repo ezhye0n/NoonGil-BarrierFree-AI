@@ -35,7 +35,7 @@ def put_text_kr(image, text, position, font_size=20, color=(0, 200, 255)):
     return cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
 
 
-def draw_output(image_path: str, model, last_message: str = "") -> str:
+def draw_output(image_path: str, model, last_message: str = "", result_dir: str = None, tts_enabled: bool = True) -> str:
     """
     이미지에 탐지 결과 시각화 및 TTS 출력
 
@@ -43,6 +43,8 @@ def draw_output(image_path: str, model, last_message: str = "") -> str:
         image_path (str): 입력 이미지 경로
         model: YOLOv8 모델 객체
         last_message (str): 직전 TTS 발화 메시지
+        result_dir (str): 결과 이미지 저장 폴더 (None이면 원본 폴더에 저장)
+        tts_enabled (bool): TTS 출력 여부 (기본값 True)
 
     Returns:
         str: 방금 발화한 TTS 메시지
@@ -53,8 +55,13 @@ def draw_output(image_path: str, model, last_message: str = "") -> str:
     results = model.predict(source=image_path, conf=0.25, verbose=False)
     boxes = results[0].boxes
 
-    base, ext = os.path.splitext(image_path)
-    output_path = base + "_result" + ext
+    # 저장 경로 설정
+    if result_dir:
+        base = os.path.splitext(os.path.basename(image_path))[0]
+        output_path = os.path.join(result_dir, base + "_result.jpg")
+    else:
+        base, ext = os.path.splitext(image_path)
+        output_path = base + "_result" + ext
 
     if len(boxes) == 0:
         image = put_text_kr(image, "장애물 없음", (10, 40),
@@ -117,7 +124,7 @@ def draw_output(image_path: str, model, last_message: str = "") -> str:
                         font_size=24, color=(0, 255, 0))
 
     # TTS 출력
-    if best_class:
+    if best_class and tts_enabled:
         tts_msg = get_tts_message(best_class, avoid_direction)
         if tts_msg:
             last_message = speak(tts_msg, last_message)
