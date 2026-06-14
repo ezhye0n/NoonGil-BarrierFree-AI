@@ -31,7 +31,11 @@ def main():
 
     # draw_output() 호출 후 추가
     depth_result = run_depth(image_path)
-    result["slope"] = depth_result
+    result["slope"] = {
+        "center_dist": float(depth_result["center_dist"]),
+        "angle": float(depth_result["angle"]) if depth_result["angle"] is not None else None,
+        "grade": depth_result["grade"]
+    }
 
     if args.output_json:
         os.makedirs(os.path.dirname(args.output_json), exist_ok=True)
