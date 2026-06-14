@@ -56,7 +56,7 @@ def analyze():
 
     # 에러 터미널 출력
     if proc.returncode != 0:
-        print("🔴 main.py 에러:", stderr_text)
+        print("main.py 에러:", stderr_text)
         return jsonify({"error": stderr_text}), 500
 
     with open(RESULT_JSON, encoding="utf-8") as f:
@@ -65,6 +65,9 @@ def analyze():
     return jsonify(data)
 
     # 3. result.json 반환
+    print("RESULT_JSON 경로:", RESULT_JSON)
+    print("파일 존재 여부:", os.path.exists(RESULT_JSON))
+    
     with open(RESULT_JSON, encoding="utf-8") as f:
         data = json.load(f)
 
