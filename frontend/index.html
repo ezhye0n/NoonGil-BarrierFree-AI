@@ -681,9 +681,11 @@ function startAnalysis() {
   });
 
   // 분석 완료 후 결과 화면으로
-  setTimeout(() => {
-    // ★ 여기서 실제 알고리즘 결과를 ANALYSIS_RESULT에 채우세요
-    // 예: ANALYSIS_RESULT = await runYourAlgorithm(uploadedFile);
+  setTimeout(async () => {
+    // 실제 알고리즘 결과를 ANALYSIS_RESULT에 채우기
+    const res = await fetch("result.json");
+    ANALYSIS_RESULT = await res.json();
+    
     renderResults();
     goTo("s-results");
   }, delay + 300);
