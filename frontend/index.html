@@ -822,6 +822,13 @@ function renderResults() {
       ctx.font = "10px sans-serif";
       ctx.fillText("권장 회피 경로", pts[1].x*cw, pts[1].y*ch + 12);
     }
+
+    // renderResults() 함수 맨 마지막에 추가
+    if (ANALYSIS_RESULT.tts_message) {
+        const utterance = new SpeechSynthesisUtterance(ANALYSIS_RESULT.tts_message);
+        utterance.lang = 'ko-KR';
+        window.speechSynthesis.speak(utterance);
+    }
   };
   img.src = uploadedSrc;
 
