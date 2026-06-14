@@ -46,36 +46,20 @@ pipe = pipeline(
     device=-1  # CPU 사용 (GPU 없는 환경)
     # device=0  # GPU 사용 시 활성화
 )
-# ───────────────────────────────────────
-# 3. 경로 설정
-# ───────────────────────────────────────
-input_folder  = "my_images"
-output_folder = "output_results"
-if not os.path.exists(output_folder):
-    os.makedirs(output_folder)
-# ───────────────────────────────────────
-# 4. 이미지 처리
-# ───────────────────────────────────────
-image_files = [f for f in os.listdir(input_folder) if f.lower().endswith(('.jpg', '.jpeg', '.png'))]
-print(f"📂 '{input_folder}'에서 {len(image_files)}장의 사진을 찾았습니다.")
-for filename in image_files:
-    img_path = os.path.join(input_folder, filename)
-    image = Image.open(img_path)
-    
+
+def run_depth(image_path):
+    image = Image.open(image_path)
     result = pipe(image)
     depth_array = result['predicted_depth']
     
-    # 중앙 거리
     center_dist = depth_array[depth_array.shape[0]//2, depth_array.shape[1]//2].item()
     
-    # ── ramp bbox가 있을 경우 경사도 계산 ──
-    # YOLO 연동 전 임시 테스트: 이미지 전체를 bbox로 사용
     H, W = depth_array.shape
     test_bbox = (0, 0, W, H)
     angle, grade = calculate_ramp_angle(depth_array, test_bbox)
-    print(f"✅ {filename} | 중앙거리: {center_dist:.2f}m | 경사각: {angle}° | 등급: {grade}")
     
-    # depth map 저장
-    save_name = f"result_{center_dist:.2f}m_{filename}"
-    save_path = os.path.join(output_folder, save_name)
-    result['depth'].save(save_path)
+    return {
+        "center_dist": center_dist,
+        "angle": angle,
+        "grade": grade
+    }
