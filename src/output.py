@@ -25,13 +25,19 @@ CLASS_KO = {
     "trash": "쓰레기통", "tree": "가로수"
 }
 
-FONT_PATH = "C:/Windows/Fonts/malgun.ttf"
+import platform
 
+if platform.system() == "Windows":
+    FONT_PATH = "C:/Windows/Fonts/malgun.ttf"
+elif platform.system() == "Darwin":
+    FONT_PATH = "/System/Library/Fonts/Supplemental/AppleGothic.ttf"
+else:
+    FONT_PATH = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
 
 def put_text_kr(image, text, position, font_size=20, color=(0, 200, 255)):
     """OpenCV 이미지에 한글 텍스트 추가"""
     img_pil = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-    draw = ImageDraw.Draw(img_pil)
+    draw = ImageDraw.Draw(img_pil)    
     font = ImageFont.truetype(FONT_PATH, font_size)
     draw.text(position, text, font=font, fill=color)
     return cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
