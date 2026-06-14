@@ -35,7 +35,7 @@ def put_text_kr(image, text, position, font_size=20, color=(0, 200, 255)):
     return cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
 
 
-def draw_output(image_path: str, model, last_message: str = "", result_dir: str = None, tts_enabled: bool = True) -> str:
+def draw_output(image_path: str, model, last_message: str = "", result_dir: str = None, tts_enabled: bool = True) -> tuple:
     """
     이미지에 탐지 결과 시각화 및 TTS 출력
 
@@ -47,7 +47,9 @@ def draw_output(image_path: str, model, last_message: str = "", result_dir: str 
         tts_enabled (bool): TTS 출력 여부 (기본값 True)
 
     Returns:
-        str: 방금 발화한 TTS 메시지
+        tuple: (last_message: str, result: dict)
+            - last_message: 방금 발화한 TTS 메시지
+            - result: 탐지 결과 딕셔너리 (app.py → result.json 저장용)
     """
     image = cv2.imread(image_path)
     h, w = image.shape[:2]
@@ -68,7 +70,13 @@ def draw_output(image_path: str, model, last_message: str = "", result_dir: str 
                             font_size=24, color=(255, 255, 255))
         cv2.imwrite(output_path, image)
         print(f"저장 완료: {output_path}")
-        return last_message
+        result = {
+            "detections": [],
+            "avoid_direction": "장애물 없음",
+            "tts_message": None,
+            "output_image": output_path,
+        }
+        return last_message, result
 
     # detections 리스트 구성
     detections = []
@@ -90,6 +98,7 @@ def draw_output(image_path: str, model, last_message: str = "", result_dir: str 
     # 바운딩박스 시각화
     best_conf = 0.0
     best_class = None
+    detection_results = []
 
     for box in boxes:
         cls_id = int(box.cls[0])
@@ -98,6 +107,13 @@ def draw_output(image_path: str, model, last_message: str = "", result_dir: str 
         class_name = CLASS_NAMES.get(cls_id, "unknown")
         class_ko = CLASS_KO.get(class_name, class_name)
         print(f"탐지: {class_name} ({conf:.2f})")
+
+        detection_results.append({
+            "class": class_name,
+            "class_ko": class_ko,
+            "confidence": round(conf, 4),
+            "bbox": [x1, y1, x2, y2],
+        })
 
         # 바운딩박스
         cv2.rectangle(image, (x1, y1), (x2, y2), (0, 200, 255), 2)
@@ -124,6 +140,7 @@ def draw_output(image_path: str, model, last_message: str = "", result_dir: str 
                         font_size=24, color=(0, 255, 0))
 
     # TTS 출력
+    tts_msg = None
     if best_class and tts_enabled:
         tts_msg = get_tts_message(best_class, avoid_direction)
         if tts_msg:
@@ -133,7 +150,13 @@ def draw_output(image_path: str, model, last_message: str = "", result_dir: str 
     cv2.imwrite(output_path, image)
     print(f"저장 완료: {output_path}")
 
-    return last_message
+    result = {
+        "detections": detection_results,
+        "avoid_direction": avoid_direction,
+        "tts_message": tts_msg,
+        "output_image": output_path,
+    }
+    return last_message, result
 
 
 if __name__ == "__main__":
@@ -142,4 +165,5 @@ if __name__ == "__main__":
     image_path = os.path.join(BASE_DIR, "../data/raw/images/경사로_1.jpg")
     model = YOLO(model_path)
     last = ""
-    last = draw_output(image_path, model, last)
+    last, result = draw_output(image_path, model, last)
+    print(result)
