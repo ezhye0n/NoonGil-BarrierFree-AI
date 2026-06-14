@@ -110,20 +110,19 @@ WSL2 환경에서 CUDA를 사용하려면 NVIDIA CUDA Toolkit 및 드라이버�
 
 | 항목 | 값 |
 |------|----|
-| Epochs | _(직접 입력)_ |
-| Batch Size | _(직접 입력)_ |
-| Image Size | _(직접 입력)_ |
-| Optimizer | _(직접 입력)_ |
+| Epochs | 100 |
+| Batch Size | 16 |
+| Image Size | 640 |
 
 ### 학습 결과
 
 | 버전 | mAP@50 |
 |------|--------|
-| YOLOv12 (v6_augmented-3) | ~0.979 |
+| YOLOv12 (v12_no_curb_ep100_best.pt) | ~0.855 |
 
 ### 학습 가중치 위치
 
-- models/best.pt
+- src/
 
 ### How to Run: 복사해서 바로 실행해볼 수 있는 명령어.
 
