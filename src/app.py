@@ -54,7 +54,9 @@ def analyze():
     os.unlink(stdout_file)
     os.unlink(stderr_file)
 
+    # 에러 터미널 출력
     if proc.returncode != 0:
+        print("🔴 main.py 에러:", stderr_text)
         return jsonify({"error": stderr_text}), 500
 
     with open(RESULT_JSON, encoding="utf-8") as f:
