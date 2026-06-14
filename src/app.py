@@ -1,4 +1,4 @@
-﻿import os, sys, json, base64, subprocess, tempfile
+import os, sys, json, base64, subprocess, tempfile
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 
@@ -15,10 +15,10 @@ def index():
 
 @app.route("/analyze", methods=["POST"])
 def analyze():
-    # 1. ?��?지 ?�??
+    # 1. 이미지 저장
     file = request.files.get("image")
     if not file:
-        return jsonify({"error": "?��?지 ?�음"}), 400
+        return jsonify({"error": "이미지 없음"}), 400
 
     tmp = tempfile.NamedTemporaryFile(
         delete=False, suffix=".jpg",
@@ -27,7 +27,7 @@ def analyze():
     file.save(tmp.name)
     tmp.close()
 
-    # 2. main.py ?�행
+    # 2. main.py 실행 (encoding="utf-8"로 이모지/한글 인코딩 오류 방지)
     result = subprocess.run(
         [sys.executable, os.path.join(BASE_DIR, "main.py"),
          "--image", tmp.name,
@@ -47,5 +47,5 @@ def analyze():
     return jsonify(data)
 
 if __name__ == "__main__":
-    print("?�길 ?�버: http://localhost:5000")
+    print("눈길 서버: http://localhost:5000")
     app.run(host="0.0.0.0", port=5000, debug=False)

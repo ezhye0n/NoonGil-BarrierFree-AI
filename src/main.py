@@ -6,15 +6,9 @@ sys.path.append(os.path.dirname(__file__))
 from ultralytics import YOLO
 from output import draw_output
 
-# TODO: depth 연동 확정 후 추가
-# from depth_inference import get_depth_angle
-# from slope import get_slope_grade, get_slope_label
-
 
 def main():
-    """
-    전체 파이프라인 실행
-    """
+    """전체 파이프라인 실행"""
     parser = argparse.ArgumentParser()
     parser.add_argument("--image", required=True, help="입력 이미지 경로")
     parser.add_argument("--output_json", default=None, help="결과 JSON 저장 경로")
@@ -33,11 +27,6 @@ def main():
     model = YOLO(model_path)
     last_message = ""
     last_message, result = draw_output(image_path, model, last_message, result_dir=result_dir)
-
-    # TODO: depth 연동 후 경사도 파이프라인 추가
-    # angle = get_depth_angle(image_path)
-    # slope_grade = get_slope_grade(angle)
-    # slope_label = get_slope_label(slope_grade)
 
     if args.output_json:
         os.makedirs(os.path.dirname(args.output_json), exist_ok=True)

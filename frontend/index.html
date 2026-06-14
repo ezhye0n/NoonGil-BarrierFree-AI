@@ -418,7 +418,7 @@ body{
       </div>
       <div>
         <div class="load-title">사진을 분석 중입니다...</div>
-        <div class="load-sub">YOLOv8 모델이 장애물을<br>탐지하고 있습니다</div>
+        <div class="load-sub">YOLOv12 모델이 장애물을<br>탐지하고 있습니다</div>
       </div>
       <div class="prog-wrap">
         <div class="prog-head">
@@ -429,7 +429,7 @@ body{
       </div>
       <div class="steps">
         <div class="step"><div class="sdot active" id="d1"></div><span class="stxt active" id="t1">이미지 전처리 중...</span></div>
-        <div class="step"><div class="sdot pending" id="d2"></div><span class="stxt" id="t2">YOLOv8 추론 실행 중...</span></div>
+        <div class="step"><div class="sdot pending" id="d2"></div><span class="stxt" id="t2">YOLOv12 추론 실행 중...</span></div>
         <div class="step"><div class="sdot pending" id="d3"></div><span class="stxt" id="t3">경사도 분석 중...</span></div>
         <div class="step"><div class="sdot pending" id="d4"></div><span class="stxt" id="t4">회피 경로 계산 중...</span></div>
       </div>
@@ -690,7 +690,46 @@ function startAnalysis() {
         method: "POST",
         body: formData
       });
-      ANALYSIS_RESULT = await res.json();
+
+      const raw = await res.json();
+
+      // 이미지 실제 크기 필요 (bbox 절대→비율 변환용)
+      const img = new Image();
+      img.src = uploadedSrc;
+      await new Promise(r => img.onload = r);
+      const imgW = img.naturalWidth;
+      const imgH = img.naturalHeight;
+
+      const COLORS = ["#623DFF","#7a5cf0","#9e84f5","#DAFF3D","#34d399","#f472b6"];
+
+      ANALYSIS_RESULT = {
+        detections: raw.detections.map((d, i) => ({
+          label: d.class_ko,
+          confidence: d.confidence,
+          bbox: {
+            x: d.bbox[0] / imgW,
+            y: d.bbox[1] / imgH,
+            w: (d.bbox[2] - d.bbox[0]) / imgW,
+            h: (d.bbox[3] - d.bbox[1]) / imgH
+          },
+          color: COLORS[i % COLORS.length]
+        })),
+        avoidPath: {
+          direction: raw.avoid_direction,
+          description: raw.tts_message || raw.avoid_direction,
+          pathPoints: []
+        },
+        slope: {
+          grade: "하",
+          angle: 0,
+          warning: "depth 센서 연동 전 — 경사도 측정 불가"
+        },
+        wheelchair: {
+          needsAssistance: raw.detections.length > 0,
+          canEnter: raw.detections.length > 0 ? "주의 진입" : "가능",
+          hazardDescription: raw.tts_message || "장애물 없음"
+        }
+      };
     
     renderResults();
     goTo("s-results");
