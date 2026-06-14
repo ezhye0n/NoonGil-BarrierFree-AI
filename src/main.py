@@ -5,6 +5,7 @@ import json
 sys.path.append(os.path.dirname(__file__))
 from ultralytics import YOLO
 from output import draw_output
+from depth_inference import run_depth
 
 
 def main():
@@ -27,6 +28,10 @@ def main():
     model = YOLO(model_path)
     last_message = ""
     last_message, result = draw_output(image_path, model, last_message, result_dir=result_dir)
+
+    # draw_output() 호출 후 추가
+    depth_result = run_depth(image_path)
+    result["slope"] = depth_result
 
     if args.output_json:
         os.makedirs(os.path.dirname(args.output_json), exist_ok=True)
