@@ -27,7 +27,7 @@ def main():
 
     model = YOLO(model_path)
     last_message = ""
-    last_message, result = draw_output(image_path, model, last_message, result_dir=result_dir)
+    last_message, result = draw_output(image_path, model, last_message, result_dir=result_dir, tts_enabled=False)
 
     # draw_output() 호출 후 추가
     depth_result = run_depth(image_path)
@@ -36,6 +36,7 @@ def main():
         "angle": float(depth_result["angle"]) if depth_result["angle"] is not None else None,
         "grade": depth_result["grade"]
     }
+    result["tts_message"] = last_message
 
     if args.output_json:
         os.makedirs(os.path.dirname(args.output_json), exist_ok=True)
