@@ -46,7 +46,8 @@ def main():
         result["tts_message"] = last_message
 
     if args.output_json:
-        os.makedirs(os.path.dirname(args.output_json), exist_ok=True)
+        out_dir = os.path.dirname(os.path.abspath(args.output_json))
+        os.makedirs(out_dir, exist_ok=True)
         with open(args.output_json, "w", encoding="utf-8") as f:
             json.dump(result, f, ensure_ascii=False, indent=2)
         print(f"📄 결과 JSON 저장: {args.output_json}")
