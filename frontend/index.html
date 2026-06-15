@@ -568,10 +568,16 @@ let ANALYSIS_RESULT = {
     description: "전방 중앙 포트홀 및 도로 파손 감지됨<br>우측으로 우회하세요",
     pathPoints: [{x:0.5,y:0.95},{x:0.62,y:0.75},{x:0.75,y:0.62},{x:0.90,y:0.50}]
   },
-  slope: {
+  slope: (raw.slope && raw.slope.angle !== null) ? {
+    grade: raw.slope.grade.includes("상") ? "상" 
+         : raw.slope.grade.includes("중") ? "중" 
+         : "하",
+    angle: raw.slope.angle,
+    warning: raw.slope.grade
+  } : {
     grade: "하",
-    angle: 1.2,
-    warning: "경사도는 낮으나 노면 파손으로 주의 필요"
+    angle: null,
+    warning: "경사로 미탐지 — 경사도 측정 불가"
   },
   wheelchair: {
     needsAssistance: true,
