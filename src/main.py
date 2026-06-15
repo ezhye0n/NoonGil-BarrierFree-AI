@@ -35,12 +35,29 @@ def main():
         result["tts_message"] = get_tts_message(best["class"], result["avoid_direction"])
 
     # draw_output() 호출 후 추가
-    depth_result = run_depth(image_path)
-    result["slope"] = {
-        "center_dist": float(depth_result["center_dist"]),
-        "angle": float(depth_result["angle"]) if depth_result["angle"] is not None else None,
-        "grade": depth_result["grade"]
-    }
+    # ramp 클래스 bbox 추출
+    ramp_bbox = None
+    for det in result.get("detections", []):
+        if det["class"] == "ramp":
+            ramp_bbox = det["bbox"]
+            break
+    
+    # ramp bbox 전달 (없으면 None → 측정 불가 처리)
+    try:
+        depth_result = run_depth(image_path, bbox=ramp_bbox)
+        result["slope"] = {
+            "center_dist": float(depth_result["center_dist"]),
+            "angle": float(depth_result["angle"]) if depth_result["angle"] is not None else None,
+            "grade": depth_result["grade"]
+        }
+        print(f"[DEBUG] slope 계산 완료: angle={depth_result['angle']}, grade={depth_result['grade']}")
+    except Exception as e:
+        print(f"[ERROR] depth 추론 실패: {e}")
+        result["slope"] = {
+            "center_dist": None,
+            "angle": None,
+            "grade": "측정 불가"
+        }
 
     if not result.get("tts_message"):
         result["tts_message"] = last_message
