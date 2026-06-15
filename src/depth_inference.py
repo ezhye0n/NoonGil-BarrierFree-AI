@@ -18,22 +18,22 @@ def calculate_ramp_angle(depth_array, bbox):
     
     n = max(3, h // 5)
     
-    top_depth    = roi[:n, :].mean()
-    bottom_depth = roi[-n:, :].mean()
+    top_depth    = roi[:n, :].mean()     # 경사로 끝(먼 쪽)
+    bottom_depth = roi[-n:, :].mean()    # 경사로 시작(가까운 쪽)
     
-    # depth 차이 = 수직 높이 차이 (meter)
-    delta_depth = abs(bottom_depth - top_depth)
+    # 수평 거리 = depth 차이가 아니라 두 depth의 평균으로 추정
+    # 경사각 = arcsin(수직 높이차 / 경사면 길이)
+    # 경사면 길이 ≈ top_depth (멀리 있는 쪽 depth)
+    ramp_length = top_depth  # 경사로 전체 길이 근사
+    vertical_diff = abs(top_depth - bottom_depth)
     
-    # bbox 세로 픽셀 수를 실제 거리로 환산
-    # 카메라 중심까지의 평균 거리 기준으로 수평 거리 추정
-    avg_depth = roi.mean()
-    bbox_height_ratio = (y2 - y1) / depth_array.shape[0]  # 전체 이미지 대비 bbox 비율
-    horizontal_dist = avg_depth * bbox_height_ratio  # 근사 수평 거리
-    
-    if horizontal_dist < 0.01:
+    if ramp_length < 0.01:
         return None, "측정 불가"
     
-    angle_deg = np.degrees(np.arctan(delta_depth / horizontal_dist))
+    # arcsin 사용: 수직 높이 / 경사면 길이
+    angle_deg = np.degrees(np.arcsin(
+        np.clip(vertical_diff / ramp_length, -1.0, 1.0)
+    ))
     
     if angle_deg >= 5:
         grade = "상 (통행 어려움)"
