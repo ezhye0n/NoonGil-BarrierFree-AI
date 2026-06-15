@@ -286,9 +286,9 @@ body{
   text-align:center;border:1.5px solid rgba(245,245,255,.1);
   position:relative;
 }
-.sbox.s-r{border-color:rgba(98,61,255,.5);background:rgba(98,61,255,.12)}
+.sbox.s-r{border-color:rgba(139,111,255,.4);background:rgba(139,111,255,.08)}
 .sbox.s-y{border-color:rgba(139,111,255,.4);background:rgba(139,111,255,.08)}
-.sbox.s-g{border-color:rgba(218,255,61,.4);background:rgba(218,255,61,.07)}
+.sbox.s-g{border-color:rgba(139,111,255,.4);background:rgba(139,111,255,.08)}
 .sgrade{font-size:20px;font-weight:700;margin-bottom:2px}
 .srange{font-size:10px;color:rgba(245,245,255,.45);margin-bottom:3px}
 .slabel{font-size:10px;font-weight:700}
@@ -868,8 +868,10 @@ function renderResults() {
   slopeRow.innerHTML = slopeGrades.map(g => {
     const isCurrent = g.grade === r.slope.grade;
     const color = isCurrent ? "#DAFF3D" : "#8b6fff";
+    const borderColor = isCurrent ? "rgba(218,255,61,.6)" : "rgba(139,111,255,.4)";
+    const bgColor = isCurrent ? "rgba(218,255,61,.12)" : "rgba(139,111,255,.08)";
     return `
-      <div class="sbox ${g.cls}" style="position:relative">
+      <div class="sbox" style="position:relative;border-color:${borderColor};background:${bgColor}">
         ${isCurrent ? '<div class="now-badge">현재</div>' : ''}
         <div class="sgrade" style="color:${color}">${g.grade}</div>
         <div class="srange">${g.range}</div>
