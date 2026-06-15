@@ -488,10 +488,6 @@ body{
       <div class="rcard" style="animation-delay:.18s">
         <div class="rcard-title">경사도 등급</div>
         <div class="slope-row" id="slope-row"></div>
-        <div class="hint" id="slope-hint">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="flex-shrink:0"><circle cx="7" cy="7" r="6" stroke="#8b6fff" stroke-width="1.2"/><path d="M7 4v4M7 9.5v.4" stroke="#8b6fff" stroke-width="1.3" stroke-linecap="round"/></svg>
-          <span class="hint-txt" id="slope-hint-txt">-</span>
-        </div>
       </div>
 
       <!-- 휠체어 사용자 안내 -->
@@ -508,10 +504,6 @@ body{
             <div class="wc-lbl">진입 가능 여부</div>
             <div class="wc-val" id="wc-enter" style="color:#DAFF3D">-</div>
           </div>
-        </div>
-        <div class="hint hint-warn">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="flex-shrink:0"><path d="M7 1L1 13h12L7 1Z" stroke="#DAFF3D" stroke-width="1.2" stroke-linejoin="round"/><path d="M7 5.5v3M7 10v.4" stroke="#DAFF3D" stroke-width="1.3" stroke-linecap="round"/></svg>
-          <span class="hint-txt" id="wc-hazard">-</span>
         </div>
       </div>
 
@@ -868,25 +860,27 @@ function renderResults() {
 
   // 5) 경사도 등급
   const slopeGrades = [
-    { grade:"상", range:"5° 이상",  label:"통행 어려움", cls:"s-r", color:"#623DFF" },
-    { grade:"중", range:"2° – 5°", label:"주의 필요",   cls:"s-y", color:"#8b6fff" },
-    { grade:"하", range:"2° 미만",  label:"통행 용이",   cls:"s-g", color:"#DAFF3D" }
+    { grade:"상", range:"5° 이상",  label:"통행 어려움", cls:"s-r" },
+    { grade:"중", range:"2° – 5°", label:"주의 필요",   cls:"s-y" },
+    { grade:"하", range:"2° 미만",  label:"통행 용이",   cls:"s-g" }
   ];
   const slopeRow = document.getElementById("slope-row");
-  slopeRow.innerHTML = slopeGrades.map(g => `
-    <div class="sbox ${g.cls}" style="position:relative">
-      ${g.grade === r.slope.grade ? '<div class="now-badge">현재</div>' : ''}
-      <div class="sgrade" style="color:${g.color}">${g.grade}</div>
-      <div class="srange">${g.range}</div>
-      <div class="slabel" style="color:${g.color}">${g.label}</div>
-    </div>`).join("");
-  document.getElementById("slope-hint-txt").textContent = r.slope.warning;
+  slopeRow.innerHTML = slopeGrades.map(g => {
+    const isCurrent = g.grade === r.slope.grade;
+    const color = isCurrent ? "#DAFF3D" : "#8b6fff";
+    return `
+      <div class="sbox ${g.cls}" style="position:relative">
+        ${isCurrent ? '<div class="now-badge">현재</div>' : ''}
+        <div class="sgrade" style="color:${color}">${g.grade}</div>
+        <div class="srange">${g.range}</div>
+        <div class="slabel" style="color:${color}">${g.label}</div>
+      </div>`;
+  }).join("");
 
   // 6) 휠체어 안내
   document.getElementById("wc-assist").textContent =
     r.wheelchair.needsAssistance ? "보조 필요" : "보조 불필요";
   document.getElementById("wc-enter").textContent  = r.wheelchair.canEnter;
-  document.getElementById("wc-hazard").innerHTML   = r.wheelchair.hazardDescription;
 }
 </script>
 
