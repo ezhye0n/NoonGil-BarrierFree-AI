@@ -29,6 +29,11 @@ def main():
     last_message = ""
     last_message, result = draw_output(image_path, model, last_message, result_dir=result_dir, tts_enabled=False)
 
+    if not result.get("tts_message") and result.get("detections"):
+        from tts import get_tts_message
+        best = max(result["detections"], key=lambda d: d["confidence"])
+        result["tts_message"] = get_tts_message(best["class"], result["avoid_direction"])
+
     # draw_output() 호출 후 추가
     depth_result = run_depth(image_path)
     result["slope"] = {
