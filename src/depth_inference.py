@@ -21,13 +21,19 @@ def calculate_ramp_angle(depth_array, bbox):
     top_depth    = roi[:n, :].mean()
     bottom_depth = roi[-n:, :].mean()
     
-    delta_h = abs(bottom_depth - top_depth)
-    dist    = roi.mean()
+    # depth 차이 = 수직 높이 차이 (meter)
+    delta_depth = abs(bottom_depth - top_depth)
     
-    if dist < 0.01:
+    # bbox 세로 픽셀 수를 실제 거리로 환산
+    # 카메라 중심까지의 평균 거리 기준으로 수평 거리 추정
+    avg_depth = roi.mean()
+    bbox_height_ratio = (y2 - y1) / depth_array.shape[0]  # 전체 이미지 대비 bbox 비율
+    horizontal_dist = avg_depth * bbox_height_ratio  # 근사 수평 거리
+    
+    if horizontal_dist < 0.01:
         return None, "측정 불가"
     
-    angle_deg = np.degrees(np.arctan(delta_h / dist))
+    angle_deg = np.degrees(np.arctan(delta_depth / horizontal_dist))
     
     if angle_deg >= 5:
         grade = "상 (통행 어려움)"
