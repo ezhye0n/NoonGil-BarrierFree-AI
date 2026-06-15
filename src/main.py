@@ -41,7 +41,9 @@ def main():
         "angle": float(depth_result["angle"]) if depth_result["angle"] is not None else None,
         "grade": depth_result["grade"]
     }
-    result["tts_message"] = last_message
+
+    if not result.get("tts_message"):
+        result["tts_message"] = last_message
 
     if args.output_json:
         os.makedirs(os.path.dirname(args.output_json), exist_ok=True)
