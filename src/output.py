@@ -7,6 +7,8 @@ from PIL import ImageFont, ImageDraw, Image
 from ultralytics import YOLO
 from avoid import get_avoid_direction
 from tts import speak, get_tts_message
+from depth_inference import pipe as depth_pipe, calculate_ramp_angle
+from slope import get_slope_label
 
 CLASS_NAMES = {
     0: "bench", 1: "bicycle", 2: "bollard", 3: "clothing_bin",
@@ -23,31 +25,45 @@ CLASS_KO = {
     "trash": "쓰레기통", "tree": "가로수"
 }
 
-FONT_PATH = "C:/Windows/Fonts/malgun.ttf"
+import platform
 
+if platform.system() == "Windows":
+    FONT_PATH = "C:/Windows/Fonts/malgun.ttf"
+elif platform.system() == "Darwin":
+    FONT_PATH = "/System/Library/Fonts/Supplemental/AppleGothic.ttf"
+else:
+    FONT_PATH = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
 
 def put_text_kr(image, text, position, font_size=20, color=(0, 200, 255)):
     """OpenCV 이미지에 한글 텍스트 추가"""
     img_pil = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-    draw = ImageDraw.Draw(img_pil)
+    draw = ImageDraw.Draw(img_pil)    
     font = ImageFont.truetype(FONT_PATH, font_size)
     draw.text(position, text, font=font, fill=color)
     return cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
 
 
-def draw_output(image_path: str, model, last_message: str = "", result_dir: str = None, tts_enabled: bool = True) -> str:
+def get_depth_array(image_path: str):
+    """depth_inference.pipe로 depth array 반환"""
+    from PIL import Image as PILImage
+    pil_img = PILImage.open(image_path)
+    result = depth_pipe(pil_img)
+    return result["predicted_depth"]
+
+
+def draw_output(image_path: str, model, last_message: str = "", result_dir: str = None, tts_enabled: bool = True) -> tuple:
     """
     이미지에 탐지 결과 시각화 및 TTS 출력
 
     Args:
         image_path (str): 입력 이미지 경로
-        model: YOLOv8 모델 객체
+        model: YOLOv12 모델 객체
         last_message (str): 직전 TTS 발화 메시지
         result_dir (str): 결과 이미지 저장 폴더 (None이면 원본 폴더에 저장)
         tts_enabled (bool): TTS 출력 여부 (기본값 True)
 
     Returns:
-        str: 방금 발화한 TTS 메시지
+        tuple: (last_message: str, result: dict)
     """
     image = cv2.imread(image_path)
     h, w = image.shape[:2]
@@ -68,7 +84,17 @@ def draw_output(image_path: str, model, last_message: str = "", result_dir: str 
                             font_size=24, color=(255, 255, 255))
         cv2.imwrite(output_path, image)
         print(f"저장 완료: {output_path}")
-        return last_message
+        result = {
+            "detections": [],
+            "avoid_direction": "장애물 없음",
+            "tts_message": None,
+            "output_image": output_path,
+            "slope": None,
+        }
+        return last_message, result
+
+    # ramp 탐지 시 depth 추론 (한 번만 실행)
+    depth_array = None
 
     # detections 리스트 구성
     detections = []
@@ -90,6 +116,8 @@ def draw_output(image_path: str, model, last_message: str = "", result_dir: str 
     # 바운딩박스 시각화
     best_conf = 0.0
     best_class = None
+    detection_results = []
+    slope_info = None
 
     for box in boxes:
         cls_id = int(box.cls[0])
@@ -99,6 +127,13 @@ def draw_output(image_path: str, model, last_message: str = "", result_dir: str 
         class_ko = CLASS_KO.get(class_name, class_name)
         print(f"탐지: {class_name} ({conf:.2f})")
 
+        detection_results.append({
+            "class": class_name,
+            "class_ko": class_ko,
+            "confidence": round(conf, 4),
+            "bbox": [x1, y1, x2, y2],
+        })
+
         # 바운딩박스
         cv2.rectangle(image, (x1, y1), (x2, y2), (0, 200, 255), 2)
 
@@ -107,13 +142,22 @@ def draw_output(image_path: str, model, last_message: str = "", result_dir: str 
         image = put_text_kr(image, label, (x1, max(y1 - 25, 0)),
                             font_size=20, color=(0, 200, 255))
 
-        # TODO: 경사도 등급 표시 — depth 연동 후 추가 예정
-        # if class_name == "ramp":
-        #     angle = get_depth_angle(image_path, x1, y1, x2, y2)
-        #     slope_grade = get_slope_grade(angle)
-        #     slope_label = get_slope_label(slope_grade)
-        #     image = put_text_kr(image, slope_label, (x1, y2 + 25),
-        #                         font_size=20, color=(255, 100, 0))
+        # 경사도 표시 — ramp 탐지 시 depth 연동
+        if class_name == "ramp":
+            try:
+                if depth_array is None:
+                    depth_array = get_depth_array(image_path)
+                angle, grade = calculate_ramp_angle(depth_array, (x1, y1, x2, y2), img_h=h)
+                if angle is not None:
+                    slope_label = get_slope_label(
+                        "ramp_high" if angle >= 5 else "ramp_mid" if angle >= 2 else "ramp_low"
+                    )
+                    image = put_text_kr(image, slope_label, (x1, y2 + 25),
+                                        font_size=20, color=(255, 100, 0))
+                    slope_info = {"angle": angle, "grade": grade}
+                    print(f"경사도: {angle}° / {grade}")
+            except Exception as e:
+                print(f"경사도 계산 오류: {e}")
 
         if conf > best_conf:
             best_conf = conf
@@ -124,6 +168,7 @@ def draw_output(image_path: str, model, last_message: str = "", result_dir: str 
                         font_size=24, color=(0, 255, 0))
 
     # TTS 출력
+    tts_msg = None
     if best_class and tts_enabled:
         tts_msg = get_tts_message(best_class, avoid_direction)
         if tts_msg:
@@ -133,7 +178,14 @@ def draw_output(image_path: str, model, last_message: str = "", result_dir: str 
     cv2.imwrite(output_path, image)
     print(f"저장 완료: {output_path}")
 
-    return last_message
+    result = {
+        "detections": detection_results,
+        "avoid_direction": avoid_direction,
+        "tts_message": tts_msg,
+        "output_image": output_path,
+        "slope": slope_info,
+    }
+    return last_message, result
 
 
 if __name__ == "__main__":
@@ -142,4 +194,5 @@ if __name__ == "__main__":
     image_path = os.path.join(BASE_DIR, "../data/raw/images/경사로_1.jpg")
     model = YOLO(model_path)
     last = ""
-    last = draw_output(image_path, model, last)
+    last, result = draw_output(image_path, model, last)
+    print(result)
