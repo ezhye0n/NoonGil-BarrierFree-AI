@@ -19,7 +19,7 @@ def main():
     print(f"📂 입력 이미지: {image_path}")
 
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    model_path = os.path.join(BASE_DIR, "noongil_v4_best.pt")
+    model_path = os.path.join(BASE_DIR, "v12_no_curb_ep100_best.pt")  # ← 수정
     print(f"🤖 모델 로드 중: {model_path}")
 
     result_dir = os.path.join(BASE_DIR, "../results/test_results/")
@@ -34,17 +34,18 @@ def main():
         best = max(result["detections"], key=lambda d: d["confidence"])
         result["tts_message"] = get_tts_message(best["class"], result["avoid_direction"])
 
-    # draw_output() 호출 후 추가
     # ramp 클래스 bbox 추출
     ramp_bbox = None
     for det in result.get("detections", []):
         if det["class"] == "ramp":
             ramp_bbox = det["bbox"]
             break
-    
+
     # ramp bbox 전달 (없으면 None → 측정 불가 처리)
     try:
-        depth_result = run_depth(image_path, bbox=ramp_bbox)
+        from PIL import Image as _PILImage
+        _img_h = _PILImage.open(image_path).size[1]
+        depth_result = run_depth(image_path, bbox=ramp_bbox, img_h=_img_h)
         result["slope"] = {
             "center_dist": float(depth_result["center_dist"]),
             "angle": float(depth_result["angle"]) if depth_result["angle"] is not None else None,
