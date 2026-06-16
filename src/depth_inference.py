@@ -8,7 +8,6 @@ from PIL import Image
 # ───────────────────────────────────────
 def calculate_ramp_angle(depth_array, bbox):
     x1, y1, x2, y2 = map(int, bbox)
-    
     depth_np = depth_array.numpy()
     roi = depth_np[y1:y2, x1:x2]
     
@@ -17,26 +16,23 @@ def calculate_ramp_angle(depth_array, bbox):
         return None, "측정 불가 (bbox 너무 작음)"
     
     n = max(3, h // 5)
-    
     top_depth    = roi[:n, :].mean()
     bottom_depth = roi[-n:, :].mean()
     
-    delta_h = abs(bottom_depth - top_depth)
-    dist    = roi.mean()
-    
-    if dist < 0.01:
+    if bottom_depth < 0.01:
         return None, "측정 불가"
     
-    angle_deg = np.degrees(np.arctan(delta_h / dist))
+    # top/bottom depth 비율로 경사 등급 판단
+    depth_ratio = top_depth / bottom_depth
     
-    if angle_deg >= 5:
+    if depth_ratio >= 2.5:
         grade = "상 (통행 어려움)"
-    elif angle_deg >= 2:
+    elif depth_ratio >= 1.5:
         grade = "중 (주의 필요)"
     else:
         grade = "하 (통행 용이)"
     
-    return round(angle_deg, 2), grade
+    return round(depth_ratio, 2), grade
 # ───────────────────────────────────────
 # 2. 모델 로드 (CPU 사용)
 # ───────────────────────────────────────
@@ -47,16 +43,22 @@ pipe = pipeline(
     # device=0  # GPU 사용 시 활성화
 )
 
-def run_depth(image_path):
+def run_depth(image_path, bbox=None):
     image = Image.open(image_path)
     result = pipe(image)
     depth_array = result['predicted_depth']
     
     center_dist = depth_array[depth_array.shape[0]//2, depth_array.shape[1]//2].item()
     
-    H, W = depth_array.shape
-    test_bbox = (0, 0, W, H)
-    angle, grade = calculate_ramp_angle(depth_array, test_bbox)
+    # ramp bbox가 없으면 측정 불가 처리
+    if bbox is None:
+        return {
+            "center_dist": center_dist,
+            "angle": None,
+            "grade": "측정 불가 (경사로 미탐지)"
+        }
+
+    angle, grade = calculate_ramp_angle(depth_array, bbox)
     
     return {
         "center_dist": center_dist,
