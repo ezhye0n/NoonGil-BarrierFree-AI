@@ -3,38 +3,32 @@
     {
       "class": "tree",
       "class_ko": "가로수",
-      "confidence": 0.8952,
+      "confidence": 0.8862,
       "bbox": [
-        463,
-        7,
-        650,
-        902
+        642,
+        1,
+        834,
+        875
       ]
     },
     {
-      "class": "electric_scooter",
-      "class_ko": "전동킥보드",
-      "confidence": 0.7296,
+      "class": "motorcycle",
+      "class_ko": "오토바이",
+      "confidence": 0.8629,
       "bbox": [
-        633,
-        402,
-        901,
-        1347
-      ]
-    },
-    {
-      "class": "bicycle",
-      "class_ko": "자전거",
-      "confidence": 0.4258,
-      "bbox": [
-        403,
-        531,
-        525,
-        766
+        844,
+        389,
+        994,
+        728
       ]
     }
   ],
   "avoid_direction": "좌측으로 우회하세요",
   "tts_message": "전방에 가로수 감지. 좌측으로 우회하세요",
-  "output_image": "C:\\Users\\marya\\OneDrive\\바탕 화면\\Hyochang-BarrierFree-AI\\src\\../results/test_results/tmpixo77jgp_result.jpg"
+  "output_image": "C:\\Users\\marya\\OneDrive\\바탕 화면\\Hyochang-BarrierFree-AI\\src\\../results/test_results/tmpc5ijuchv_result.jpg",
+  "slope": {
+    "center_dist": 17.9035587310791,
+    "angle": null,
+    "grade": "측정 불가 (경사로 미탐지)"
+  }
 }
