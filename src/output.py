@@ -147,7 +147,7 @@ def draw_output(image_path: str, model, last_message: str = "", result_dir: str 
             try:
                 if depth_array is None:
                     depth_array = get_depth_array(image_path)
-                angle, grade = calculate_ramp_angle(depth_array, (x1, y1, x2, y2))
+                angle, grade = calculate_ramp_angle(depth_array, (x1, y1, x2, y2), img_h=h)
                 if angle is not None:
                     slope_label = get_slope_label(
                         "ramp_high" if angle >= 5 else "ramp_mid" if angle >= 2 else "ramp_low"
