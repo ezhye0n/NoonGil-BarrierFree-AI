@@ -728,6 +728,13 @@ function startAnalysis() {
 
     renderResults();
     goTo("s-results");
+
+    if (raw.tts_message && "speechSynthesis" in window) {
+      const utterance = new SpeechSynthesisUtterance(raw.tts_message);
+      utterance.lang = "ko-KR";
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utterance);
+    }
   }, delay + 300);
 }
 
@@ -879,13 +886,11 @@ function renderResults() {
       <div class="srange">${g.range}</div>
       <div class="slabel" style="color:${g.color}">${g.label}</div>
     </div>`).join("");
-  document.getElementById("slope-hint-txt").textContent = r.slope.warning;
 
   // 6) 휠체어 안내
   document.getElementById("wc-assist").textContent =
     r.wheelchair.needsAssistance ? "보조 필요" : "보조 불필요";
   document.getElementById("wc-enter").textContent  = r.wheelchair.canEnter;
-  document.getElementById("wc-hazard").innerHTML   = r.wheelchair.hazardDescription;
 }
 </script>
 
