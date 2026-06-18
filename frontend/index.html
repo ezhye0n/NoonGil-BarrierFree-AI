@@ -302,7 +302,18 @@ body{
 /* 현재 감지된 등급만 노란색 표시 */
 .sbox.active-slope{
   border-color:#DAFF3D;
-  background:rgba(218,255,61,.07);
+  background:#DAFF3D;
+}
+
+.sbox.active-slope .sgrade,
+.sbox.active-slope .srange,
+.sbox.active-slope .slabel{
+  color:#00002e;
+}
+
+.sbox.active-slope .now-badge{
+  background:#00002e;
+  color:#DAFF3D;
 }
 .sgrade{font-size:20px;font-weight:700;margin-bottom:2px}
 .srange{font-size:10px;color:rgba(245,245,255,.45);margin-bottom:3px}
