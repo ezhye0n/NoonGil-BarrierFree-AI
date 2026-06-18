@@ -281,39 +281,54 @@ body{
 .avoid-desc{font-size:11.5px;color:rgba(245,245,255,.5);line-height:1.65}
 /* slope */
 .slope-row{display:flex;gap:7px}
+/* 기본 경사도 박스 */
 .sbox{
   flex:1;
   border-radius:12px;
   padding:10px 5px;
   text-align:center;
-  border:1.5px solid rgba(245,245,255,.1);
-  background:rgba(245,245,255,.03);
+  border:1.5px solid rgba(139,111,255,.28);
+  background:rgba(245,245,255,.04);
   position:relative;
 }
 
-/* 기존 등급 색상 강조 제거 */
-.sbox.s-r,
-.sbox.s-y,
-.sbox.s-g{
-  border-color:rgba(245,245,255,.1);
-  background:rgba(245,245,255,.03);
+/* 비선택 등급 글씨 */
+.sbox .sgrade{
+  color:#8b6fff;
 }
 
-/* 현재 감지된 등급만 노란색 표시 */
+.sbox .srange{
+  color:rgba(245,245,255,.55);
+}
+
+.sbox .slabel{
+  color:rgba(245,245,255,.68);
+}
+
+/* 선택된 경사도 박스 */
 .sbox.active-slope{
-  border-color:#DAFF3D;
-  background:#DAFF3D;
+  border-color:rgba(218,255,61,.75);
+  background:rgba(218,255,61,.18);
+  box-shadow:0 0 14px rgba(218,255,61,.16);
 }
 
-.sbox.active-slope .sgrade,
-.sbox.active-slope .srange,
-.sbox.active-slope .slabel{
-  color:#00002e;
-}
-
-.sbox.active-slope .now-badge{
-  background:#00002e;
+/* 선택된 박스 글씨 */
+.sbox.active-slope .sgrade{
   color:#DAFF3D;
+}
+
+.sbox.active-slope .srange{
+  color:rgba(245,245,255,.78);
+}
+
+.sbox.active-slope .slabel{
+  color:#f5f5ff;
+}
+
+/* 현재 배지 */
+.sbox.active-slope .now-badge{
+  background:#DAFF3D;
+  color:#00002e;
 }
 .sgrade{font-size:20px;font-weight:700;margin-bottom:2px}
 .srange{font-size:10px;color:rgba(245,245,255,.45);margin-bottom:3px}
