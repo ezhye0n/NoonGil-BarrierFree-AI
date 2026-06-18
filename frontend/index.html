@@ -429,7 +429,7 @@ body{
       </div>
       <div class="steps">
         <div class="step"><div class="sdot active" id="d1"></div><span class="stxt active" id="t1">이미지 전처리 중...</span></div>
-        <div class="step"><div class="sdot pending" id="d2"></div><span class="stxt" id="t2">YOLOv8 추론 실행 중...</span></div>
+        <div class="step"><div class="sdot pending" id="d2"></div><span class="stxt" id="t2">YOLOv12 추론 실행 중...</span></div>
         <div class="step"><div class="sdot pending" id="d3"></div><span class="stxt" id="t3">경사도 분석 중...</span></div>
         <div class="step"><div class="sdot pending" id="d4"></div><span class="stxt" id="t4">회피 경로 계산 중...</span></div>
       </div>
@@ -488,10 +488,6 @@ body{
       <div class="rcard" style="animation-delay:.18s">
         <div class="rcard-title">경사도 등급</div>
         <div class="slope-row" id="slope-row"></div>
-        <div class="hint" id="slope-hint">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="flex-shrink:0"><circle cx="7" cy="7" r="6" stroke="#8b6fff" stroke-width="1.2"/><path d="M7 4v4M7 9.5v.4" stroke="#8b6fff" stroke-width="1.3" stroke-linecap="round"/></svg>
-          <span class="hint-txt" id="slope-hint-txt">-</span>
-        </div>
       </div>
 
       <!-- 휠체어 사용자 안내 -->
@@ -509,13 +505,7 @@ body{
             <div class="wc-val" id="wc-enter" style="color:#DAFF3D">-</div>
           </div>
         </div>
-        <div class="hint hint-warn">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="flex-shrink:0"><path d="M7 1L1 13h12L7 1Z" stroke="#DAFF3D" stroke-width="1.2" stroke-linejoin="round"/><path d="M7 5.5v3M7 10v.4" stroke="#DAFF3D" stroke-width="1.3" stroke-linecap="round"/></svg>
-          <span class="hint-txt" id="wc-hazard">-</span>
-        </div>
       </div>
-
-      <button class="btn-retake" onclick="resetAndGoUpload()">다시 분석하기</button>
     </div>
   </div>
 </div>
