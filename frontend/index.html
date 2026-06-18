@@ -282,13 +282,28 @@ body{
 /* slope */
 .slope-row{display:flex;gap:7px}
 .sbox{
-  flex:1;border-radius:12px;padding:10px 5px;
-  text-align:center;border:1.5px solid rgba(245,245,255,.1);
+  flex:1;
+  border-radius:12px;
+  padding:10px 5px;
+  text-align:center;
+  border:1.5px solid rgba(245,245,255,.1);
+  background:rgba(245,245,255,.03);
   position:relative;
 }
-.sbox.s-r{border-color:rgba(98,61,255,.5);background:rgba(98,61,255,.12)}
-.sbox.s-y{border-color:rgba(139,111,255,.4);background:rgba(139,111,255,.08)}
-.sbox.s-g{border-color:rgba(218,255,61,.4);background:rgba(218,255,61,.07)}
+
+/* 기존 등급 색상 강조 제거 */
+.sbox.s-r,
+.sbox.s-y,
+.sbox.s-g{
+  border-color:rgba(245,245,255,.1);
+  background:rgba(245,245,255,.03);
+}
+
+/* 현재 감지된 등급만 노란색 표시 */
+.sbox.active-slope{
+  border-color:#DAFF3D;
+  background:rgba(218,255,61,.07);
+}
 .sgrade{font-size:20px;font-weight:700;margin-bottom:2px}
 .srange{font-size:10px;color:rgba(245,245,255,.45);margin-bottom:3px}
 .slabel{font-size:10px;font-weight:700}
@@ -878,14 +893,17 @@ function renderResults() {
     { grade:"중", range:"2° – 5°", label:"주의 필요",   cls:"s-y", color:"#8b6fff" },
     { grade:"하", range:"2° 미만",  label:"통행 용이",   cls:"s-g", color:"#DAFF3D" }
   ];
+
+  const currentSlopeGrade = r.slope.grade;
   const slopeRow = document.getElementById("slope-row");
   slopeRow.innerHTML = slopeGrades.map(g => `
-    <div class="sbox ${g.cls}" style="position:relative">
-      ${g.grade === r.slope.grade ? '<div class="now-badge">현재</div>' : ''}
-      <div class="sgrade" style="color:${g.color}">${g.grade}</div>
+    <div class="sbox ${g.cls} ${g.grade === currentSlopeGrade ? "active-slope" : ""}">
+      ${g.grade === currentSlopeGrade ? '<div class="now-badge">현재</div>' : ''}
+      <div class="sgrade">${g.grade}</div>
       <div class="srange">${g.range}</div>
-      <div class="slabel" style="color:${g.color}">${g.label}</div>
-    </div>`).join("");
+      <div class="slabel">${g.label}</div>
+    </div>
+  `).join("");
 
   // 6) 휠체어 안내
   document.getElementById("wc-assist").textContent =
