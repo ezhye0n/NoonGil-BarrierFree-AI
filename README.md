@@ -78,9 +78,6 @@ git clone https://github.com/sunsmarterjie/yolov12.git
 cd yolov12
 pip install -e .
 cd ..
-```
-
-```bash
 pip install -r requirements.txt
 ```
 
@@ -95,7 +92,7 @@ WSL2 환경에서 CUDA를 사용하려면 NVIDIA CUDA Toolkit 및 드라이버�
 
 본 프로젝트는 **직접 수집 데이터**와 **공개 데이터셋**을 결합하여 학습 데이터를 구성하였습니다.
 
-### 직접 수집 데이터
+### 직접 수집 데이터: 총 892장 (train 780 / val 74 / test 38)
 - 수집 장소: 효창공원 일대 보행로
 - 수집 방법: 휠체어 사용자 시점(정면)에서 직접 촬영
 - 주요 클래스: 볼라드(bollard), 전동킥보드(scooter) 등
@@ -109,7 +106,7 @@ WSL2 환경에서 CUDA를 사용하려면 NVIDIA CUDA Toolkit 및 드라이버�
 - Rotation (회전)
 - Brightness / Contrast 조정
 
-### 공개 데이터셋
+### 공개 데이터셋: 총 685장
 - 출처: [Roboflow Universe](https://universe.roboflow.com/) 공개 데이터셋 활용
 - 직접 수집 데이터와 병합 후 Augmentation 적용
   - step_new v1 (273장)
@@ -151,7 +148,7 @@ WSL2 환경에서 CUDA를 사용하려면 NVIDIA CUDA Toolkit 및 드라이버�
 
 ### 학습 가중치 위치
 
-- src/v12_no_curb_finetune_v10_best.pt
+- `src/v12_no_curb_finetune_v10_best.pt`
 
 ### How to Run: 복사해서 바로 실행해볼 수 있는 명령어.
 
@@ -160,15 +157,18 @@ WSL2 환경에서 CUDA를 사용하려면 NVIDIA CUDA Toolkit 및 드라이버�
 git clone https://github.com/ezhye0n/NoonGil-BarrierFree-AI.git
 cd NoonGil-BarrierFree-AI
 
-# 2. 의존성 설치
-pip install -r requirements.txt
+# 2. YOLOv12 설치
+git clone https://github.com/sunsmarterjie/yolov12.git
+cd yolov12
+pip install -e .
+cd ..
 
-# 3. 장애물 탐지 + 경사도 추정 실행 (이미지 1장)
-python src/main.py --image path/to/your/image.jpg
+# 3. 의존성 설치
+pip install -r requirements.txt
 
 # 4. 웹 인터페이스 실행 (Flask)
 python src/app.py
 ```
 
 ### Results & Failure Analysis: 성공적인 시각화 결과와 솔직한 오작동 사례 분석 표.
-수치적 결과 그래프와 '솔직한 실패 사례(오작동 사진 및 원인 분석)' 포함하기git
+수치적 결과 그래프와 '솔직한 실패 사례(오작동 사진 및 원인 분석)' 포함하기
