@@ -65,26 +65,40 @@ Output             : 통과 가능 여부 알림 (UI / TTS) + 회피 경로 제�
 
 ---
 
-## ⚙️ Environment Setup
+## ⚙️ Getting Started
 
-### Prerequisites
+  ### Prerequisites
+  
+  - Python 3.9+
+  - CUDA 지원 GPU (권장)
+  - YOLOv12 별도 설치 필요
+  
+  ### GPU 설정 (WSL2 기준)
+  
+  WSL2 환경에서 CUDA를 사용하려면 NVIDIA CUDA Toolkit 및 드라이버가 설치되어 있어야 합니다.
+  자세한 설정 방법은 [NVIDIA WSL2 가이드](https://docs.nvidia.com/cuda/wsl-user-guide/)를 참고하세요.
 
-- Python 3.9+
-- CUDA 지원 GPU (권장)
-- YOLOv12 별도 설치 필요:
+  ---
 
-```bash
-git clone https://github.com/sunsmarterjie/yolov12.git
-cd yolov12
-pip install -e .
-cd ..
-pip install -r requirements.txt
-```
-
-### GPU 설정 (WSL2 기준)
-
-WSL2 환경에서 CUDA를 사용하려면 NVIDIA CUDA Toolkit 및 드라이버가 설치되어 있어야 합니다.
-자세한 설정 방법은 [NVIDIA WSL2 가이드](https://docs.nvidia.com/cuda/wsl-user-guide/)를 참고하세요.
+  ### How to Run: 복사해서 바로 실행해볼 수 있는 명령어.
+  
+  ```bash
+  # 1. 저장소 클론
+  git clone https://github.com/ezhye0n/NoonGil-BarrierFree-AI.git
+  cd NoonGil-BarrierFree-AI
+  
+  # 2. YOLOv12 설치
+  git clone https://github.com/sunsmarterjie/yolov12.git
+  cd yolov12
+  pip install -e .
+  cd ..
+  
+  # 3. 의존성 설치
+  pip install -r requirements.txt
+  
+  # 4. 웹 인터페이스 실행 (Flask)
+  python src/app.py
+  ```
 
 ---
 
@@ -149,26 +163,6 @@ WSL2 환경에서 CUDA를 사용하려면 NVIDIA CUDA Toolkit 및 드라이버�
 ### 학습 가중치 위치
 
 - `src/v12_no_curb_finetune_v10_best.pt`
-
-### How to Run: 복사해서 바로 실행해볼 수 있는 명령어.
-
-```bash
-# 1. 저장소 클론
-git clone https://github.com/ezhye0n/NoonGil-BarrierFree-AI.git
-cd NoonGil-BarrierFree-AI
-
-# 2. YOLOv12 설치
-git clone https://github.com/sunsmarterjie/yolov12.git
-cd yolov12
-pip install -e .
-cd ..
-
-# 3. 의존성 설치
-pip install -r requirements.txt
-
-# 4. 웹 인터페이스 실행 (Flask)
-python src/app.py
-```
 
 ### Results & Failure Analysis: 성공적인 시각화 결과와 솔직한 오작동 사례 분석 표.
 수치적 결과 그래프와 '솔직한 실패 사례(오작동 사진 및 원인 분석)' 포함하기
