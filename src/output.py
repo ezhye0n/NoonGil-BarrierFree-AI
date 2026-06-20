@@ -190,7 +190,7 @@ def draw_output(image_path: str, model, last_message: str = "", result_dir: str 
 
 if __name__ == "__main__":
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    model_path = os.path.join(BASE_DIR, "noongil_v4_best.pt")
+    model_path = os.path.join(BASE_DIR, "v12_no_curb_finetune_v10_best.pt")
     image_path = os.path.join(BASE_DIR, "../data/raw/images/경사로_1.jpg")
     model = YOLO(model_path)
     last = ""
