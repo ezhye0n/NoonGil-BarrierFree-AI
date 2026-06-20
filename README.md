@@ -127,14 +127,12 @@ pip install -r requirements.txt
 
 ### Pretrained Model
 
-Download the pretrained weights and place them at `src/v12_no_curb_finetune_v10_best.pt`.
+Download the pretrained weights from [**GitHub Releases**](https://github.com/ezhye0n/NoonGil-BarrierFree-AI/releases/tag/v12_no_curb_finetune) and place the file at `src/v12_no_curb_finetune_v10_best.pt`.
 
 ```
 src/
 └── v12_no_curb_finetune_v10_best.pt   ← place here
 ```
-
-> Download link: *(https://github.com/ezhye0n/NoonGil-BarrierFree-AI/releases/tag/v12_no_curb_finetune)*
 
 ---
 
@@ -155,7 +153,7 @@ Open your browser and go to `http://localhost:5000`.
 1. Go to `http://localhost:5000`
 2. Upload a front-facing sidewalk image (`.jpg` / `.png`)
 3. Click **분석하기**
-4. View detected obstacles with bounding boxes, slope grade, avoidance path, and TTS alert
+4. View detected obstacles with bounding boxes (class name and confidence score shown at top-left of each box), slope grade, avoidance path, and TTS alert
 
 **Option 2 — Direct API call**
 
@@ -194,7 +192,7 @@ We combined our **own collected dataset** with **public datasets** from [Roboflo
 
 ### Collected Dataset — 892 images (train 780 / val 74 / test 38)
 
-- **Location:** Sidewalks around Sookmyung Women's University (숙대입구역 ~ 효창공원역)
+- **Location:** Sidewalks around Sookmyung Women's University (효창공원앞역 ~ 숙명여대 정문)
 - **Viewpoint:** Frontal, from wheelchair user's eye-level (90~100cm above ground)
 - **Split ratio:** Train : Val : Test = **7 : 2 : 1** (random shuffle)
 
@@ -257,26 +255,31 @@ We combined our **own collected dataset** with **public datasets** from [Roboflo
 - **Model:** YOLOv12 (Object Detection)
 - **Environment:** Google Colab (GPU)
 
-### Hyperparameters
+### Training Pipeline
 
-| Parameter | Value |
-|-----------|-------|
-| Epochs | 100 |
-| Batch Size | 16 |
-| Image Size | 640 |
+| Stage | Description | Hyperparameters |
+|-------|-------------|-----------------|
+| Base training | Initial training on collected + public dataset | Epochs 100, Batch 16, Imgsz 640 |
+| Fine-tuning | Added step_new v1 (273 images), merged and retrained | Epochs 50, Freeze 10 |
 
-### Results
+### Final Results
 
-| Version | Weights | mAP@50 |
-|---------|---------|--------|
-| YOLOv12 final | `v12_no_curb_finetune_v10_best.pt` | ~0.883 |
+| Metric | Value |
+|--------|-------|
+| mAP@50 | **0.883** |
+| mAP@50-95 | **0.544** |
+| Precision | **0.872** |
+| Recall | **0.840** |
+| F1 Score | **0.84** (at confidence 0.501) |
 
-### Pretrained Weights
+### Model Zoo
 
-The pretrained weights are available in two ways:
+Please download the pretrained weights from [**GitHub Releases**](https://github.com/ezhye0n/NoonGil-BarrierFree-AI/releases/tag/v12_no_curb_finetune) and place the file at `src/v12_no_curb_finetune_v10_best.pt`.
 
-- **In-repo:** `src/v12_no_curb_finetune_v10_best.pt`
-- **GitHub Releases:** Download from the [Releases](../../releases) tab and place at `src/v12_no_curb_finetune_v10_best.pt`
+| Release | Model | mAP@50 | mAP@50-95 | Download |
+|---------|-------|--------|-----------|----------|
+| **v12_no_curb_finetune** *(Latest)* | YOLOv12s | **0.883** | **0.544** | [Download](https://github.com/ezhye0n/NoonGil-BarrierFree-AI/releases/tag/v12_no_curb_finetune) |
+| v12_no_curb_ep100 | YOLOv12s | 0.855 | 0.525 | [Download](https://github.com/ezhye0n/NoonGil-BarrierFree-AI/releases/tag/v12-no-curb-ep100) |
 
 ---
 
@@ -286,77 +289,84 @@ The pretrained weights are available in two ways:
 
 | Metric | Value |
 |--------|-------|
-| mAP@50 | **0.884** |
-| mAP@50-95 | **~0.52** |
-| Precision | **1.00** (at confidence 0.932) |
-| Recall | **~0.84** |
+| mAP@50 | **0.883** |
+| mAP@50-95 | **0.544** |
+| Precision | **0.872** |
+| Recall | **0.840** |
 | F1 Score | **0.84** (at confidence 0.501) |
+
+*Evaluated on 178 validation images across all classes.*
 
 ### Per-Class AP (mAP@50)
 
-| Class | AP@50 |
-|-------|-------|
-| clothing_bin | 0.995 |
-| cone | 0.995 |
-| electric_scooter | 0.995 |
-| fire_hydrant | 0.995 |
-| trash | 0.995 |
-| street_light | 0.978 |
-| bollard | 0.926 |
-| bicycle | 0.911 |
-| ramp | 0.897 |
-| tree | 0.778 |
-| pavement_damage | 0.697 |
-| step | 0.688 |
-| motorcycle | 0.645 |
+| Class | AP@50 | Note |
+|-------|-------|------|
+| `clothing_bin` | 0.995 | |
+| `cone` | 0.995 | |
+| `electric_scooter` | 0.995 | |
+| `fire_hydrant` | 0.995 | |
+| `trash` | 0.995 | |
+| `street_light` | 0.978 | |
+| `bollard` | 0.926 | |
+| `bicycle` | 0.911 | |
+| `ramp` | 0.897 | ↑ +0.280 after fine-tuning (0.617 → 0.897) |
+| `tree` | 0.778 | |
+| `pavement_damage` | 0.697 | |
+| `step` | 0.675 | ↑ +0.143 after fine-tuning (0.532 → 0.675) |
+| `motorcycle` | 0.645 | Finalized as-is (see Failure Analysis) |
 
-> `step`, `pavement_damage`, `motorcycle` show relatively lower AP — see Failure Analysis below.
+### Slope Estimation Logic
+
+경사도 추정은 3가지 방법 중 max 값을 채택하는 방식으로 개선되었습니다.
+
+| Method | Grade: 상 (≥5°) | Grade: 중 (≥2°) |
+|--------|----------------|----------------|
+| Method 1: Pinhole camera model angle | angle ≥ 5.0° | angle ≥ 2.0° |
+| Method 2: Depth ratio | ratio ≥ 1.4 | ratio ≥ 1.15 |
+| Method 3: BBox vertical ratio | ratio ≥ 0.4 | ratio ≥ 0.25 |
 
 ### Training Curves
 
-![Training Results](assets/results/results.png)
+![Training Results](results/metrics/results.png)
 
-All three training losses (box, cls, dfl) show consistent downward trends. Validation losses also decrease steadily, with mAP@50 stabilizing around **0.87~0.89** and mAP@50-95 around **0.52**.
+All three training losses (box, cls, dfl) show consistent downward trends. Validation losses also decrease steadily, with mAP@50 stabilizing around **0.87~0.89** and mAP@50-95 around **0.54**.
 
 ### Precision-Recall Curve
 
-![PR Curve](assets/results/PR_curve.png)
+![PR Curve](results/metrics/PR_curve.png)
 
-Overall **mAP@0.5 = 0.884**. Most classes achieve high precision across the full recall range. `step` and `motorcycle` show relatively lower area under curve.
+Overall **mAP@0.5 = 0.883**. Most classes achieve high precision across the full recall range. `step` and `motorcycle` show relatively lower area under curve.
 
 ### F1-Confidence Curve
 
-![F1 Curve](assets/results/F1_curve.png)
+![F1 Curve](results/metrics/F1_curve.png)
 
 Best F1 score of **0.84** is achieved at confidence threshold **0.501**, which is used as the default inference threshold.
 
 ### Precision-Confidence Curve
 
-![P Curve](assets/results/P_curve.png)
-
-All-class precision reaches **1.00** at confidence **0.932**. High-confidence predictions are highly reliable.
+![P Curve](results/metrics/P_curve.png)
 
 ### Confusion Matrix
 
-![Confusion Matrix](assets/results/confusion_matrix.png)
+![Confusion Matrix](results/metrics/confusion_matrix.png)
 
 ### Failure Analysis
 
-| Class | Issue | Root Cause | Improvement Direction |
-|-------|-------|------------|----------------------|
-| `step` (단차) | Low AP (0.688), frequent false negatives | Visually subtle — small height differences blend with ground texture | Collect more varied step samples; improve ground truth labeling granularity |
-| `pavement_damage` (노면파손) | Low AP (0.697), misclassified as background | Irregular shape and texture vary heavily by lighting | Add more augmentation; collect data under direct sunlight and night |
-| `motorcycle` (오토바이) | Low AP (0.645) | Limited training samples (31 instances); confused with bicycle | Increase dataset size for motorcycle class |
-| `step` / `background` | 10 background predictions labeled as `step` | Ambiguous boundary regions in test images | Refine bounding box annotation standards |
+| Target | Issue | Root Cause | Decision |
+|--------|-------|------------|----------|
+| `motorcycle` | Low AP (0.645), no improvement planned | Only 31 training instances; most peripheral to core wheelchair-safety use case | **Finalized as-is** — not a primary obstacle for wheelchair users |
+| `step` / `background` | Background misclassified as `step` (10 cases) | Ambiguous boundary regions in low-contrast ground textures | Refine bounding box annotation standards in future iterations |
+| Slope grade (중 → 상) | Gentle slopes (2°~5°) occasionally over-estimated as 상 | 3-method max strategy can amplify outlier estimates on mild gradients | Remaining known limitation; under-estimation preferred over over-estimation for safety |
 
 ### Detection Success Cases
 
 | Case | Description |
 |------|-------------|
-| ![success_1](assets/results/success_1.png) | **경사로 + 가로수 탐지** — 경사로(90%), 가로수(81%) 동시 탐지. 경사도 등급 **상(5° 이상)** 판정, 좌측 우회 안내 |
-| ![success_2](assets/results/success_2.png) | **경사로 탐지** — 경사로(87%) 탐지. 경사도 등급 **상** 판정, 우측 우회 안내. 보조 필요 / 주의 진입 경고 |
-| ![success_3](assets/results/success_3.png) | **단차 복수 탐지** — 단차(32%, 40%) 2개 탐지. 경사도 등급 **하(2° 미만)** 판정, 좌측 우회 안내 |
-| ![success_4](assets/results/success_4.png) | **라바콘 + 단차 탐지** — 라바콘(61%), 단차(36%) 탐지. 경사도 등급 **하** 판정, 좌측 우회 안내 |
+| ![success_1](results/output_images/success_1.png) | **경사로 + 가로수 탐지** — 경사로(90%), 가로수(81%) 동시 탐지. 경사도 등급 **상(5° 이상)** 판정, 좌측 우회 안내 |
+| ![success_2](results/output_images/success_2.png) | **경사로 탐지** — 경사로(87%) 탐지. 경사도 등급 **상** 판정, 우측 우회 안내. 보조 필요 / 주의 진입 경고 |
+| ![success_3](results/output_images/success_3.png) | **단차 복수 탐지** — 단차(32%, 40%) 2개 탐지. 경사도 등급 **하(2° 미만)** 판정, 좌측 우회 안내 |
+| ![success_4](results/output_images/success_4.png) | **라바콘 + 단차 탐지** — 라바콘(61%), 단차(36%) 탐지. 경사도 등급 **하** 판정, 좌측 우회 안내 |
 
 ---
 
@@ -364,21 +374,34 @@ All-class precision reaches **1.00** at confidence **0.932**. High-confidence pr
 
 ```
 NoonGil-BarrierFree-AI/
+├── .github/
+├── data/
+├── docs/
+├── frontend/
+├── model/
+├── noongil/
+├── results/
 ├── src/
 │   ├── app.py                              # Flask web server (entry point)
-│   ├── v12_no_curb_finetune_v10_best.pt    # Pretrained weights
-│   └── ...
-├── assets/
-│   └── results/                            # Training graphs & detection result images
+│   ├── main.py                             # Pipeline entry point
+│   ├── avoid.py                            # Avoidance path logic
+│   ├── depth_inference.py                  # Depth Anything inference
+│   ├── slope.py                            # Slope estimation
+│   ├── output.py                           # Result output
+│   ├── tts.py                              # TTS alert
+│   ├── test_pipeline.py                    # Pipeline test script
+│   ├── test_result.json                    # Test output sample
+│   └── v12_no_curb_finetune_v10_best.pt    # Pretrained weights
+├── results/
+│   ├── metrics/                            # Training graphs (PR curve, F1 curve, confusion matrix, etc.)
+│   ├── output_images/                      # Detection success case screenshots
+│   ├── failure_cases/
+│   ├── test_results/
+│   └── .gitkeep
+├── .gitignore
 ├── requirements.txt
 └── README.md
 ```
-
----
-
-## 📋 TODO
-
-- [ ] Update mAP@50-95 with exact final epoch value
 
 ---
 
