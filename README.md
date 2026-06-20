@@ -375,12 +375,22 @@ Best F1 score of **0.84** is achieved at confidence threshold **0.501**, which i
 ```
 NoonGil-BarrierFree-AI/
 ├── .github/
+│   ├── ISSUE_TEMPLATE/
+│   ├── ISSUE
+│   └── PULL_REQUEST_TEMPLATE
 ├── data/
 ├── docs/
 ├── frontend/
+│   ├── index.html
+│   └── result.json
 ├── model/
-├── noongil/
+│   ├── notebooks/
+│   └── data.yaml
 ├── results/
+│   ├── metrics/                            # Training graphs (PR curve, F1 curve, confusion matrix, etc.)
+│   ├── output_images/                      # Detection success case screenshots
+│   ├── failure_cases/
+│   └── test_results/
 ├── src/
 │   ├── app.py                              # Flask web server (entry point)
 │   ├── main.py                             # Pipeline entry point
@@ -391,13 +401,7 @@ NoonGil-BarrierFree-AI/
 │   ├── tts.py                              # TTS alert
 │   ├── test_pipeline.py                    # Pipeline test script
 │   ├── test_result.json                    # Test output sample
-│   └── v12_no_curb_finetune_v10_best.pt    # Pretrained weights
-├── results/
-│   ├── metrics/                            # Training graphs (PR curve, F1 curve, confusion matrix, etc.)
-│   ├── output_images/                      # Detection success case screenshots
-│   ├── failure_cases/
-│   ├── test_results/
-│   └── .gitkeep
+│   └── v12_no_curb_finetune_v10_best.pt    # Pretrained weights (download from Releases)
 ├── .gitignore
 ├── requirements.txt
 └── README.md
