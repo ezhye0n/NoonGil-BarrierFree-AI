@@ -474,7 +474,7 @@ body{
       <div class="rcard" style="animation-delay:.12s">
         <div class="rcard-title">회피 경로 제시</div>
         <div class="avoid-row">
-          <div class="avoid-icon">
+          <div class="avoid-icon" id="avoid-icon">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 10h14M11 4l6 6-6 6" stroke="#8b6fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </div>
           <div>
@@ -854,29 +854,26 @@ function renderResults() {
       </div>`;
   });
 
-// 4) 회피 경로 텍스트 + 화살표
-document.getElementById("avoid-direction").textContent = r.avoidPath.direction;
-document.getElementById("avoid-desc").innerHTML       = r.avoidPath.description;
+  // 4) 회피 경로 텍스트
+  document.getElementById("avoid-direction").textContent = r.avoidPath.direction;
+  document.getElementById("avoid-desc").innerHTML = r.avoidPath.description;
 
-// 방향에 따라 화살표 SVG 교체
-const dir = r.avoidPath.direction;
-const arrowSvg = {
-  left:    `<path d="M17 10H3M9 4l-6 6 6 6" stroke="#8b6fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`,
-  right:   `<path d="M3 10h14M11 4l6 6-6 6" stroke="#8b6fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`,
-  forward: `<path d="M10 17V3M4 9l6-6 6 6" stroke="#8b6fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`,
-  stop:    `<path d="M5 5l10 10M15 5L5 15" stroke="#8b6fff" stroke-width="2" stroke-linecap="round"/>`
-};
-
-let arrowPath = arrowSvg.forward;
-if (dir.includes("좌측") || dir.includes("왼쪽") || dir.includes("left")) {
-  arrowPath = arrowSvg.left;
-} else if (dir.includes("우측") || dir.includes("오른쪽") || dir.includes("right")) {
-  arrowPath = arrowSvg.right;
-} else if (dir.includes("없음") || dir.includes("장애물")) {
-  arrowPath = arrowSvg.stop;
-}
-
-document.querySelector(".avoid-icon svg").innerHTML = arrowPath;
+  // 화살표 SVG 동적 교체
+  const dir = r.avoidPath.direction || "";
+  const iconEl = document.getElementById("avoid-icon");
+  if (iconEl) {
+    let svg = "";
+    if (dir.includes("좌측") || dir.includes("왼쪽")) {
+      svg = `<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M17 10h-14M10 4l-7 6 7 6" stroke="#8b6fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+    } else if (dir.includes("우측") || dir.includes("오른쪽")) {
+      svg = `<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 10h14M10 4l7 6-7 6" stroke="#8b6fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+    } else if (dir.includes("장애물 없음") || dir.includes("없음")) {
+      svg = `<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 5l10 10M15 5l-10 10" stroke="#8b6fff" stroke-width="2" stroke-linecap="round"/></svg>`;
+    } else {
+      svg = `<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 17V3M4 9l6-6 6 6" stroke="#8b6fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+    }
+    iconEl.innerHTML = svg;
+  }
 
   // 5) 경사도 등급
   const slopeGrades = [
