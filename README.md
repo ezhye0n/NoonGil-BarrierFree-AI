@@ -55,12 +55,6 @@ Integration        : 좌표 + 거리 + 경사도 값 통합 계산
 Output             : 통과 가능 여부 알림 (UI / TTS) + 회피 경로 제시
 ```
 
-### 공개 데이터셋: 총 685장
-- 출처: [Roboflow Universe](https://universe.roboflow.com/) 공개 데이터셋 활용
-- 직접 수집 데이터와 병합 후 Augmentation 적용
-  - step_new v1 (273장)
-  - pothole v3 (412장)
-
 ---
 
 ## 🏗️ Model Architecture

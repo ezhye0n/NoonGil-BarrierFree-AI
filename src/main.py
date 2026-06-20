@@ -19,7 +19,7 @@ def main():
     print(f"📂 입력 이미지: {image_path}")
 
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    model_path = os.path.join(BASE_DIR, "v12_no_curb_finetune_v10_best.pt")  # ← 가중치 경로
+    model_path = os.path.join(BASE_DIR, "v12_no_curb_ep100_best.pt")  # ← 수정
     print(f"🤖 모델 로드 중: {model_path}")
 
     result_dir = os.path.join(BASE_DIR, "../results/test_results/")
