@@ -187,6 +187,7 @@ def draw_output(image_path: str, model, last_message: str = "", result_dir: str 
     }
     return last_message, result
 
+
 if __name__ == "__main__":
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     model_path = os.path.join(BASE_DIR, "noongil_v4_best.pt")
