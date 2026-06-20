@@ -1,0 +1,19 @@
+Traceback (most recent call last):
+  File "C:\Users\marya\OneDrive\바탕 화면\Hyochang-BarrierFree-AI\src\main.py", line 7, in <module>
+    from output import draw_output
+  File "C:\Users\marya\OneDrive\바탕 화면\Hyochang-BarrierFree-AI\src\output.py", line 10, in <module>
+    from depth_inference import pipe as depth_pipe, calculate_ramp_angle
+  File "C:\Users\marya\OneDrive\바탕 화면\Hyochang-BarrierFree-AI\src\depth_inference.py", line 4, in <module>
+    from transformers import pipeline
+  File "C:\Users\marya\OneDrive\바탕 화면\Hyochang-BarrierFree-AI\noongil\Lib\site-packages\transformers\__init__.py", line 800, in <module>
+    import_structure = define_import_structure(Path(__file__).parent / "models", prefix="models")
+  File "C:\Users\marya\OneDrive\바탕 화면\Hyochang-BarrierFree-AI\noongil\Lib\site-packages\transformers\utils\import_utils.py", line 3037, in define_import_structure
+    import_structure = create_import_structure_from_path(module_path)
+  File "C:\Users\marya\OneDrive\바탕 화면\Hyochang-BarrierFree-AI\noongil\Lib\site-packages\transformers\utils\import_utils.py", line 2754, in create_import_structure_from_path
+    import_structure[entry.name] = create_import_structure_from_path(entry.path)
+                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\marya\OneDrive\바탕 화면\Hyochang-BarrierFree-AI\noongil\Lib\site-packages\transformers\utils\import_utils.py", line 2770, in create_import_structure_from_path
+    with open(os.path.join(module_path, module_name), encoding="utf-8") as f:
+         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen codecs>", line 312, in __init__
+KeyboardInterrupt
