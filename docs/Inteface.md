@@ -1,4 +1,3 @@
-이지현 작성 | `Interface.md`
 # Model Output Interface (v1.0)
 
 이지현 작성 | 최종 수정: 2026-06-14
@@ -37,9 +36,30 @@
   ],
   "avoid_direction": "좌측으로 우회하세요",
   "tts_message": "전방에 가로수 감지. 좌측으로 우회하세요",
-  "output_image": "results/test_results/xxx_result.jpg"
+  "output_image": "results/test_results/test_image1_result.jpg",
+  "slope": {
+    "center_dist": 13.46,
+    "angle": 46.84,
+    "grade": "상 (통행 어려움)"
+  }
 }
 ```
+
+- **`slope` 필드 상세:**
+
+| 필드 | 타입 | 설명 |
+|------|------|------|
+| `center_dist` | float | Depth Map 기반 중앙 거리 추정값 |
+| `angle` | float | 추정 경사 각도 (°) |
+| `grade` | string | 경사도 등급 |
+
+- **경사도 등급 기준:**
+
+| 등급 | 조건 | 의미 |
+|------|------|------|
+| `"상 (통행 어려움)"` | 5° 이상 | 휠체어 단독 통행 어려움 |
+| `"중 (주의 필요)"` | 2° 이상 5° 미만 | 주의 필요 |
+| `"하 (통행 용이)"` | 2° 미만 | 통행 용이 |
 
 - **지원 클래스 목록:**
 
@@ -66,9 +86,7 @@
 
 - **Format:** `.npy` (Numpy Array) 또는 `.png` (Depth Map)
 - **Description:** 이미지의 각 픽셀에 대응하는 깊이값 (0~255 또는 실제 거리) 배열
-- **연동 예정:** `slope.py`의 `get_slope_grade(angle)` 입력값으로 사용
-
-> ⚠️ 현재 depth 연동 전 단계 — `slope.py` 파이프라인은 구현 완료, depth 값 수신 후 연결 예정
+- **연동:** `slope.py`의 `get_slope_grade(angle)` 입력값으로 사용 (연동 완료)
 
 ---
 
@@ -77,5 +95,5 @@
 - **Input:** YOLO 탐지 결과 JSON (위 1번 형식)
 - **Output:**
   - TTS 음성 출력 (`edge-tts`, `ko-KR-SunHiNeural`)
-  - 결과 이미지 저장 (`_result.jpg`)
+  - 결과 이미지 저장 (`results/test_results/xxx_result.jpg`)
   - 웹 UI 표시 (`index.html` → Flask `/analyze` 엔드포인트)
