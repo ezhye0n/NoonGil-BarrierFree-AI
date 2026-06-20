@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>눈길 배치 분석 리포트</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: #0a0c1f;
+    font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+    color: #f5f5ff;
+    min-height: 100vh;
+    padding: 24px 16px 48px;
+  }
+  .header {
+    text-align: center;
+    padding: 32px 0 28px;
+    border-bottom: 1px solid #1e1e3e;
+    margin-bottom: 28px;
+  }
+  .header h1 {
+    font-size: 26px;
+    font-weight: 800;
+    color: #f5f5ff;
+    letter-spacing: 6px;
+    margin-bottom: 6px;
+  }
+  .header p {
+    font-size: 13px;
+    color: #555;
+    letter-spacing: 1px;
+  }
+  .summary {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 32px;
+  }
+  .stat {
+    background: #12122a;
+    border: 1px solid #1e1e3e;
+    border-radius: 12px;
+    padding: 14px 24px;
+    text-align: center;
+    min-width: 120px;
+  }
+  .stat-num { font-size: 28px; font-weight: 800; color: #8b6fff; }
+  .stat-lbl { font-size: 11px; color: #555; margin-top: 2px; letter-spacing: 0.5px; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .card {
+    background: #12122a;
+    border: 1px solid #1e1e3e;
+    border-radius: 16px;
+    padding: 16px;
+    transition: border-color .2s;
+  }
+  .card:hover { border-color: #8b6fff; }
+  .footer {
+    text-align: center;
+    margin-top: 48px;
+    font-size: 11px;
+    color: #333;
+    letter-spacing: 0.5px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>눈길 &nbsp;분석 리포트</h1>
+  <p>YOLOv12 기반 보행 약자 인도 장애물 탐지 · 배치 결과</p>
+</div>
+
+<div class="summary">
+  <div class="stat">
+    <div class="stat-num">10</div>
+    <div class="stat-lbl">분석 이미지</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">8</div>
+    <div class="stat-lbl">총 탐지 객체</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">0.8</div>
+    <div class="stat-lbl">장당 평균 탐지</div>
+  </div>
+</div>
+
+<div class="grid">
+<div style="text-align:center;color:#555;padding:60px;">분석된 이미지가 없습니다.</div>
+</div>
+
+<div class="footer">
+  © 2025 noon-gil · 보행 약자 안전 보조 시스템
+</div>
+
+</body>
+</html>
