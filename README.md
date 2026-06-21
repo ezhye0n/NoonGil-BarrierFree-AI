@@ -350,6 +350,7 @@ Best F1 score of **0.84** is achieved at confidence threshold **0.501**, which i
 ![Confusion Matrix](results/metrics/confusion_matrix.png)
 
 ### Failure Analysis
+📹 Demo Video: https://drive.google.com/file/d/14RINbrw1OEfcKJ9n8pw_ofYHYh5kEN_n/view?usp=sharing
 
 | Target | Issue | Root Cause | Decision |
 |--------|-------|------------|----------|
@@ -358,6 +359,7 @@ Best F1 score of **0.84** is achieved at confidence threshold **0.501**, which i
 | Slope grade (중 → 상) | Gentle slopes (2°~5°) occasionally over-estimated as 상 | 3-method max strategy can amplify outlier estimates on mild gradients | Remaining known limitation; under-estimation preferred over over-estimation for safety |
 
 ### Detection Success Cases
+📹 Demo Video: https://drive.google.com/file/d/1PwsMYNm2k2lIrOudPEKCAPo1fN90e1Ik/view?usp=sharing
 
 | Case | Description |
 |------|-------------|
