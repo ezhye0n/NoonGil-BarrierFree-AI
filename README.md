@@ -1,87 +1,85 @@
 # NoonGil-BarrierFree-AI 👁️ : Barrier-Free Navigation Assistant for Wheelchair Users
 
-> 휠체어 사용자의 보행 안전을 위한 AI 기반 장애물 탐지 및 경사도 추정 시스템
-
-> **Team NoonGil** | 이지현(팀장) · 윤서연 · 탁예린 | Sookmyung Women's University, Seoul, Republic of Korea
+> An AI-based obstacle detection and slope estimation system for safe wheelchair navigation
+ 
+> **Team NoonGil** | Lee Jihyun (Lead) · Yun Seoyeon · Tak Yerin | Sookmyung Women's University, Seoul, Republic of Korea
 
 ---
 
 ## 📌 Project Overview
 
-본 프로젝트는 휠체어 사용자가 보행 중 마주치는 **장애물 탐지**와 **경사도 추정**을 통해
-통과 가능 여부를 실시간으로 알려주는 AI 기반 보행 안전 보조 시스템입니다.
-
-효창공원 일대 보행로에서의 실제 경험을 바탕으로, 볼라드·전동킥보드 등 장애물로 인한
-휠체어 사용자의 이동권 문제를 해결하고자 시작되었습니다.
-정면 촬영된 이미지 한 장을 입력받아 장애물 탐지, 경사도 추정, 회피 경로 제시, TTS 알림까지
-하나의 파이프라인으로 처리합니다.
+This project is an AI-powered pedestrian safety assistance system that provides real-time passability judgments for wheelchair users by detecting **obstacles** and **estimating slope grades** encountered during navigation.
+ 
+Motivated by first-hand observations of accessibility barriers — such as bollards and illegally parked electric scooters — on sidewalks around Hyochang Park, we set out to build a technical solution for the mobility challenges faced by wheelchair users.
+ 
+The system accepts a single front-facing image as input and processes it through a unified pipeline covering obstacle detection, slope estimation, avoidance path suggestion, and TTS alerts.
 
 ---
 
 ## 🌍 Social Background
 
-대한민국의 장애인 이동권 문제는 오랫동안 해결되지 않은 사회적 과제입니다.
-
-2023년 보건복지부 통계에 따르면 국내 등록 장애인 수는 약 264만 명이며, 이 중 지체장애인은 전체의 44.3%로 가장 높은 비율을 차지합니다.
-
-그러나 도심 보도 환경은 여전히 이들의 이동을 가로막는 구조적 장벽으로 가득합니다.
-불법 주정차 오토바이, 전동킥보드·자전거 방치, 보도블록 파손, 가파른 경사로 등은 휠체어 사용자의 실질적인 이동을 위협하는 요소들입니다.
-
-특히 이러한 장애물들은 사전에 예측하거나 우회 경로를 계획하기 어려워, 단순한 불편을 넘어 낙상 사고 및 고립으로 이어질 수 있습니다.
-
-본 프로젝트는 효창공원 일대에서의 직접적인 현장 관찰을 계기로 시작되었습니다.
-보행 환경이 충분히 정비되어 있다고 여겨지는 도심 속에서도, 휠체어 사용자가 혼자서는 안전하게 이동하기 어렵다는 현실을 목격하며 기술적 해결책의 필요성을 절감하였습니다.
-
-> 🇺🇳 UN 장애인권리협약(CRPD) 제9조는 장애인의 물리적 환경에 대한 접근성을 기본권으로 명시하고 있으며, 대한민국 또한 2009년 이를 비준하였습니다.
-
-NoonGil-BarrierFree-AI는 이러한 사회적 공백을 AI 기술로 메우고자 합니다.
-실시간 장애물 탐지와 경사도 분석을 통해, 휠체어 사용자가 보다 안전하고 자율적으로 도시를 이동할 수 있는 환경을 만드는 것이 이 프로젝트의 궁극적인 목표입니다.
+The mobility rights of people with disabilities in South Korea remain a longstanding and unresolved social challenge.
+ 
+According to 2023 statistics from the Ministry of Health and Welfare, approximately 2.64 million people are registered as having disabilities in Korea, of whom those with physical disabilities account for the highest proportion at 44.3%.
+ 
+Yet urban sidewalk environments remain filled with structural barriers that obstruct their movement.
+Illegally parked motorcycles, abandoned electric scooters and bicycles, damaged pavement, and steep ramps are among the factors that pose real threats to the safe mobility of wheelchair users.
+ 
+These obstacles are particularly difficult to anticipate or route around in advance, meaning they represent more than mere inconvenience — they can lead to fall accidents and isolation.
+ 
+This project was sparked by direct field observation in the Hyochang Park area.
+Even in parts of the city considered well-maintained, we witnessed firsthand how difficult it is for wheelchair users to navigate safely on their own, and felt the urgent need for a technological solution.
+ 
+> 🇺🇳 Article 9 of the UN Convention on the Rights of Persons with Disabilities (CRPD) enshrines access to the physical environment as a fundamental right. The Republic of Korea ratified this convention in 2009.
+ 
+NoonGil-BarrierFree-AI aims to bridge this social gap through AI technology.
+By enabling real-time obstacle detection and slope analysis, our ultimate goal is to create an environment where wheelchair users can navigate cities more safely and autonomously.
 
 ---
 
 ## 🔄 Program Pipeline
 
 ```
-Data Input         : 정면 촬영 이미지 1장 입력
+Data Input         : Single front-facing image
       ↓
-Object Detection   : YOLOv12 기반 장애물 Bounding Box 좌표 추출
+Object Detection   : Obstacle bounding box extraction via YOLOv12
       ↓
-Depth Estimation   : Depth Anything 기반 거리 데이터(Depth Map) 생성
+Depth Estimation   : Depth map generation via Depth Anything
       ↓
-Slope Estimation   : Depth Map 기반 경사도 추정
+Slope Estimation   : Slope grade estimation from depth map
       ↓
-Integration        : 좌표 + 거리 + 경사도 값 통합 계산
+Integration        : Unified computation of coordinates + distance + slope
       ↓
-Output             : 통과 가능 여부 알림 (UI / TTS) + 회피 경로 제시
+Output             : Passability alert (UI / TTS) + Avoidance path suggestion
 ```
 
 ---
 
 ## 🏗️ Model Architecture
 
-| 모듈 | 모델 | 역할 |
-|------|------|------|
-| Object Detection | YOLOv12 | 장애물 탐지 및 Bounding Box 추출 |
-| Depth Estimation | Depth Anything | Depth Map 생성 |
-| Slope Estimation | Depth Map 기반 연산 | 경사도 추정 |
+| Module | Model | Role |
+|--------|-------|------|
+| Object Detection | YOLOv12 | Obstacle detection and bounding box extraction |
+| Depth Estimation | Depth Anything | Depth map generation |
+| Slope Estimation | Depth map-based computation | Slope grade estimation |
 
 ---
 
 ### ⚙️ Prerequisites
 
-| 항목 | 내용 |
-|------|------|
-| **언어** | Python 3.9+ |
-| **웹 프레임워크** | Flask |
+| Item | Details |
+|------|---------|
+| **Language** | Python 3.9+ |
+| **Web Framework** | Flask |
 | **Object Detection** | YOLOv12 |
 | **Depth Estimation** | Depth Anything |
-| **학습 환경** | Google Colab (GPU) |
-| **실행 환경** | WSL2 + CUDA (로컬) 또는 GPU 서버 권장 |
-| **데이터 관리** | Roboflow (라벨링·증강·버전 관리) |
-| **버전 관리** | Git / GitHub |
-
-> **GPU 설정 (WSL2 기준):** NVIDIA CUDA Toolkit 및 드라이버 설치 필요.
-> 자세한 내용은 [NVIDIA WSL2 가이드](https://docs.nvidia.com/cuda/wsl-user-guide/) 참고.
+| **Training Environment** | Google Colab (GPU) |
+| **Runtime Environment** | WSL2 + CUDA (local) or GPU server recommended |
+| **Data Management** | Roboflow (labeling, augmentation, version control) |
+| **Version Control** | Git / GitHub |
+ 
+> **GPU Setup (WSL2):** NVIDIA CUDA Toolkit and driver installation required.
+> See the [NVIDIA WSL2 Guide](https://docs.nvidia.com/cuda/wsl-user-guide/) for details.
 
 ---
 
@@ -363,10 +361,11 @@ Best F1 score of **0.84** is achieved at confidence threshold **0.501**, which i
 
 | Case | Description |
 |------|-------------|
-| ![success_1](results/output_images/success_1.png) | **경사로 + 가로수 탐지** — 경사로(90%), 가로수(81%) 동시 탐지. 경사도 등급 **상(5° 이상)** 판정, 좌측 우회 안내 |
-| ![success_2](results/output_images/success_2.png) | **경사로 탐지** — 경사로(87%) 탐지. 경사도 등급 **상** 판정, 우측 우회 안내. 보조 필요 / 주의 진입 경고 |
-| ![success_3](results/output_images/success_3.png) | **단차 복수 탐지** — 단차(32%, 40%) 2개 탐지. 경사도 등급 **하(2° 미만)** 판정, 좌측 우회 안내 |
-| ![success_4](results/output_images/success_4.png) | **라바콘 + 단차 탐지** — 라바콘(61%), 단차(36%) 탐지. 경사도 등급 **하** 판정, 좌측 우회 안내 |
+| ![success_1](results/output_images/success_1.png) | **Ramp + Tree Detection** — Ramp (90%) and tree (81%) simultaneously detected. Slope grade judged as **High (≥5°)**; left-side avoidance path suggested. |
+| ![success_2](results/output_images/success_2.png) | **Ramp Detection** — Ramp (87%) detected. Slope grade judged as **High**; right-side avoidance path suggested. Assistance recommended / caution entry warning issued. |
+| ![success_3](results/output_images/success_3.png) | **Multiple Step Detection** — Two steps detected (32%, 40%). Slope grade judged as **Low (< 2°)**; left-side avoidance path suggested. |
+| ![success_4](results/output_images/success_4.png) | **Cone + Step Detection** — Cone (61%) and step (36%) detected. Slope grade judged as **Low**; left-side avoidance path suggested. |
+
 
 ---
 
@@ -415,7 +414,7 @@ NoonGil-BarrierFree-AI/
 MIT License
 
 Copyright (c) 2025 Team NoonGil
-(이지현, 윤서연, 탁예린 — 숙명여자대학교)
+(Lee Jihyun, Yun Seoyeon, Tak Yerin — Sookmyung Women's University)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -436,7 +435,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-> **외부 라이브러리 라이센스:**
+> **Third-party Library Licenses:**
 > - YOLOv12: [GPL-3.0](https://github.com/sunsmarterjie/yolov12/blob/main/LICENSE)
 > - Depth Anything: [Apache 2.0](https://github.com/LiheYoung/Depth-Anything/blob/main/LICENSE)
 > - Flask: [BSD-3-Clause](https://flask.palletsprojects.com/en/stable/license/)
