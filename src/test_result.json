@@ -1,0 +1,34 @@
+{
+  "detections": [
+    {
+      "class": "bicycle",
+      "class_ko": "자전거",
+      "confidence": 0.4701,
+      "bbox": [
+        276,
+        575,
+        645,
+        894
+      ]
+    },
+    {
+      "class": "pavement_damage",
+      "class_ko": "노면 파손",
+      "confidence": 0.4245,
+      "bbox": [
+        5,
+        1017,
+        1040,
+        1399
+      ]
+    }
+  ],
+  "avoid_direction": "우측으로 우회하세요",
+  "tts_message": "전방에 자전거 감지. 우측으로 우회하세요",
+  "output_image": "/Users/takyerin/NoonGil-BarrierFree-AI/src/../results/test_results/test_image1_result.jpg",
+  "slope": {
+    "center_dist": 13.46264934539795,
+    "angle": 46.84000015258789,
+    "grade": "상 (통행 어려움)"
+  }
+}
