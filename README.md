@@ -317,7 +317,7 @@ Please download the pretrained weights from [**GitHub Releases**](https://github
 
 ### Slope Estimation Logic
 
-경사도 추정은 3가지 방법 중 max 값을 채택하는 방식으로 개선되었습니다.
+Slope estimation adopts the maximum value among three methods.
 
 | Method | Grade: 상 (≥5°) | Grade: 중 (≥2°) |
 |--------|----------------|----------------|
@@ -365,10 +365,10 @@ Best F1 score of **0.84** is achieved at confidence threshold **0.501**, which i
 
 | Case | Description |
 |------|-------------|
-| ![success_1](results/output_images/success_1.png) | **Ramp + Tree Detection** — Ramp (90%) and tree (81%) simultaneously detected. Slope grade judged as **High (≥5°)**; left-side avoidance path suggested. |
-| ![success_2](results/output_images/success_2.png) | **Ramp Detection** — Ramp (87%) detected. Slope grade judged as **High**; right-side avoidance path suggested. Assistance recommended / caution entry warning issued. |
-| ![success_3](results/output_images/success_3.png) | **Multiple Step Detection** — Two steps detected (32%, 40%). Slope grade judged as **Low (< 2°)**; left-side avoidance path suggested. |
-| ![success_4](results/output_images/success_4.png) | **Cone + Step Detection** — Cone (61%) and step (36%) detected. Slope grade judged as **Low**; left-side avoidance path suggested. |
+| ![success_1](results/output_images/success_1.png) | **Ramp + Tree Detection** — Ramp (90%) and tree (81%) simultaneously detected. Slope grade judged as **상 (≥5°)**; left-side avoidance path suggested. |
+| ![success_2](results/output_images/success_2.png) | **Ramp Detection** — Ramp (87%) detected. Slope grade judged as **상**; right-side avoidance path suggested. Assistance recommended / caution entry warning issued. |
+| ![success_3](results/output_images/success_3.png) | **Multiple Step Detection** — Two steps detected (32%, 40%). Slope grade judged as **하 (< 2°)**; left-side avoidance path suggested. |
+| ![success_4](results/output_images/success_4.png) | **Cone + Step Detection** — Cone (61%) and step (36%) detected. Slope grade judged as **하**; left-side avoidance path suggested. |
 
 
 ---
