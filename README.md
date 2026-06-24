@@ -239,6 +239,8 @@ We combined our **own collected dataset** with **public datasets** from [Roboflo
 > **Ramp ground truth (level app, °):** 4°, 6°, 8°, 10°, 13°, 14°, 16°  
 > *(Wheelchair passage threshold: step ≥ 3cm, slope ≥ 4°)*
 
+> **Note:** `bench` was included in training data (16 instances) but absent from the validation set; AP could not be computed.
+
 ### Data Augmentation (via Roboflow)
 
 | Augmentation | Value | Purpose |
@@ -314,6 +316,7 @@ Please download the pretrained weights from [**GitHub Releases**](https://github
 | `pavement_damage` | 0.697 | |
 | `step` | 0.675 | ↑ +0.143 after fine-tuning (0.532 → 0.675) |
 | `motorcycle` | 0.645 | Finalized as-is (see Failure Analysis) |
+| `bench` | N/A | Excluded from evaluation (0 val instances) |
 
 ### Slope Estimation Logic
 
