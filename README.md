@@ -169,9 +169,11 @@ curl -X POST http://localhost:5000/analyze \
 We used our own collected dataset combined with public datasets from [Roboflow Universe](https://universe.roboflow.com/).
 The final preprocessed dataset (v4, YOLOv12 format) can be downloaded via the Roboflow API:
 
-```python
+```bash
 pip install roboflow
+```
 
+```python
 from roboflow import Roboflow
 
 rf = Roboflow(api_key="YOUR_ROBOFLOW_API_KEY")
